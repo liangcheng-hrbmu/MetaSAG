@@ -7,8 +7,8 @@
 
 - **必选参数：**
 ```
-inputFastq  --  样本的短reads测序文件位置<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                如果是单端fastq文件，文件名必须以.fastq结尾；<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+inputFastq  --  样本的短reads测序文件位置
+                如果是单端fastq文件，文件名必须以.fastq结尾；
                 如果是双端fastq文件，文件名必须以_R1.fastq或_R2.fastq结尾，并以列表格式给出。
 
 outputdir   --  所有结果文件的存放路径
@@ -23,6 +23,18 @@ outputdir   --  所有结果文件的存放路径
 
 
 - **结果：**
+
+Eg. bcread.txt
+
+|    cell    | read  |
+|:----------:|:-----:|
+| Cell500000 |  332  |
+| Cell500001 |  131  |
+| Cell500002 | 88281 |
+| Cell500003 |  420  |
+| Cell500004 | 1593  |
+|    ...     |  ...  |
+
 
 
 
@@ -44,13 +56,21 @@ outputdir   --  所有结果文件的存放路径
 #执行代码
 
 import MetaSAG.BCFilter as bcf
+
 obj=bcf.BCFilter('./testData/BCFilter/input/S10_Tag.fastq','./testData/BCFilter/result/')
+
 obj.CellCountStatistic()
+
 # obj.BC_Count  展示每个细胞中有多少条reads的数据框（可修改）
+
 obj.getMinReads()
+
 # obj.min_reads 展示该样本应选取的最低reads阈值（可修改）
+
 obj.BCMinReads()
+
 #obj.BC_Count_Filter    展示根据obj.min_reads过滤后剩余的细胞列表
+
 
 ```
 
@@ -70,20 +90,26 @@ obj.BCMinReads()
 
 - **必选参数：**
 ```
-Sam --  样本名列表
-AllCell --  每个样本中所有细胞个数列表
-SaveCell    --  过滤细胞后，每个样本中保留的细胞个数列表
-outputDir   --  结果文件存放路劲
+Sam       --  样本名列表
+AllCell   --  每个样本中所有细胞个数列表
+SaveCell  --  过滤细胞后，每个样本中保留的细胞个数列表
+outputDir --  结果文件存放路径
 ```
 
 ```
 #执行代码示例
 AllCell = [3132, 4557, 2321, 3433, 4500]
+
 SavedCell = [2000,3000,1734,2222,2000]
+
 Sam=['S5','S6','S7','S8','S10']
+
 outputDir=’./testData/BCFilter/result/’
+
 import MetaSAG.BCfilter as bcf
+
 bcf.SamBCFilterStack(Sam,SavedCell,AllCell,'./testData/BCFilter/result/')
+
 
 ```
 

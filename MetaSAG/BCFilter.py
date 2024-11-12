@@ -226,7 +226,7 @@ class BCFilter():
         plt.scatter(x,y,s=1)
         plt.xlim(-1000,5000)
         plt.xlabel('reads_num')
-        plt.ylabel('D1')
+        plt.ylabel('D2')
         plt.title('Scatter Plot of reads number and D2')
         plt.grid(True)
         plt.savefig(os.path.join(outputDir,'2ndDerivate.pdf'))
