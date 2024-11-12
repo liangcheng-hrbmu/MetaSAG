@@ -1,0 +1,6 @@
+recursive-include READMESource *
+recursive-include testData
+recursive-include MetaSAG *
+include LICENSE.txt
+include README.md
+
