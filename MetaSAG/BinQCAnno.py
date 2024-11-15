@@ -71,7 +71,7 @@ def removeShortContig(inputfastafile,outputfastafile,minlen=500):
 def Summary(FastaSGB,CheckmFile,GTDBFile,outputSummary=None):
 
     mpa = pd.read_csv(os.path.join(PYTHONDIR,'mpa_vOct22_CHOCOPhlAnSGB_202403_species.txt'),sep='\t',header=None)
-    mpa.columns=['SGB','SGBSpecies']
+    mpa.columns=['SGB','SGBName']
 
     FastaSGB = pd.read_csv(FastaSGB,sep='\t',header=0)
     FastaSGB.columns = ['Bin','SGB']
@@ -143,7 +143,7 @@ def Summary(FastaSGB,CheckmFile,GTDBFile,outputSummary=None):
 
 
 
-def FastaQC1(FastaDir,FastaOut):
+def FastaQC1(FastaDir,FastaOut,minlen=500):
     #该函数只进行去除短Contig的操作
     #创建目录
     if not os.path.exists(FastaOut):
@@ -152,7 +152,7 @@ def FastaQC1(FastaDir,FastaOut):
     files = os.listdir(FastaDir)
     for filename in files:
         if filename.endswith('.fasta'):
-            removeShortContig(os.path.join(FastaDir, filename),os.path.join(FastaOut, filename))
+            removeShortContig(os.path.join(FastaDir, filename),os.path.join(FastaOut, filename),minlen=minlen)
 
 
 

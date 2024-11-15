@@ -20,11 +20,11 @@ CellBarn    --  分割样本后存储液滴文件的结果路径
 
 - **可选参数：**
 ```
-FindBarcode --  要求输入的是一个用户自己写的函数，该函数只输入一个reads字符串，要求返回一个字符串，该字符串在正常匹配时返回reads所属的Barcode字符串，或者未匹配的原因字符串eg,"Erro","Len","W1","BC"总之能返回一个字符串。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                默认为脚本中定义的函数FindBarcode()
+FindBarcode     --  要求输入的是一个用户自己写的函数，该函数只输入一个reads字符串，要求返回一个字符串，该字符串在正常匹配时返回reads所属的Barcode字符串，或者未匹配的原因字符串eg,"Erro","Len","W1","BC"总之能返回一个字符串。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    默认为脚本中定义的函数FindBarcode()
 
-warning --  FindBarcode函数中设定某些reads无法正常匹配Barcode时自编函数返回字符串的情况
-            默认为['Len','W1','BC']
+warning         --  FindBarcode函数中设定某些reads无法正常匹配Barcode时自编函数返回字符串的情况
+                    默认为['Len','W1','BC']
 
 filterWarning   --  如果reads对应的Barcode字符串在warning中，这样的reads写入到单液滴文件中
                     默认为True
@@ -45,16 +45,20 @@ GTTTGTNTGAGTGATTGCTTGTGACGCCTTGTTTGTTTTCGTCGGCAGCGTCAGATGTCTATAAGAGACAGGATAAATAC
 +
 AAAAAE#EEEEEEEEEEEEEEEEEEEEEEEAEEEEEEEEEEEEEEEEEEEEEEEEEEE6/EEEEEEAEEAAEEE/EEEEEEEEEEEEEEEEEEEEEEEEA<AEEEEAAEEE<A/EE<<<<<AE/E/A<A<A<EEA66AAEEEEEAE<<<E<A<A6AA/
 
-··· ···
 ```
 
 
 ```
 #执行代码
+
 import BarcodeDeal as bcd
+
 inputFastq = 'zszshhh/testData/BarcodeDeal/input/test.fastq'
+
 CellBarn = './testData/BarcodeDeal/result/CellBarn_single'
+
 bcd.SAGSplit(inputFastq,CellBarn)
+
 
 ```
 
@@ -79,10 +83,15 @@ AAAA/E/EEAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE6EEEEEEEEEAEA<EEE//EEA
 
 ```
 #执行代码
+
 import BarcodeDeal as bcd
+
 inputFastq = ['zszshhh/testData/BarcodeDeal/input/test_R1.fastq','zszshhh/testData/BarcodeDeal/input/test_R2.fastq']
+
 CellBarn = './testData/BarcodeDeal/result/CellBarn_pair'
+
 bcd.SAGSplit(inputFastq,CellBarn)
+
 
 ```
 
@@ -95,28 +104,29 @@ bcd.SAGSplit(inputFastq,CellBarn)
 - **必选参数：**
 ```
 inputFastqDir   --  每个液滴测序文件存放的路径<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-如果是单端fastq文件，文件名必须以.fastq结尾；<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-如果是双端fastq文件，文件名必须以_R1.fastq或_R2.fastq结尾。
+                    如果是单端fastq文件，文件名必须以.fastq结尾；<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    如果是双端fastq文件，文件名必须以_R1.fastq或_R2.fastq结尾。
 
-trimDir -- 接头去除后的结果文件存放位置
+trimDir         --  接头去除后的结果文件存放位置
+
 ```
 
 - **可选参数：**
 ```
-ReadsEnd    --  输入液滴测序文件是单端还是双端<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-默认为单端，ReadsEnd='Single'；<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-如果是双端，修改ReadsEnd='Pair'.
+ReadsEnd        --  输入液滴测序文件是单端还是双端<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    默认为单端，ReadsEnd='Single'；<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    如果是双端，修改ReadsEnd='Pair'.
 
 
 ILLUMINACLIP    --  jar包参数,默认为'TruSeq3-PE.fa:2:30:10:3:TRUE'   
 
-LEADING --  jar包参数,默认为25
+LEADING         --  jar包参数,默认为25
 
-TRAILING --  jar包参数,默认为3
+TRAILING        --  jar包参数,默认为3
 
-SLIDINGWINDOW --  jar包参数,默认为'4:20'
+SLIDINGWINDOW   --  jar包参数,默认为'4:20'
 
-MINLEN --  jar包参数,默认为30
+MINLEN          --  jar包参数,默认为30
 
-threads --  jar包参数,默认为12
+threads         --  jar包参数,默认为12
 ```
