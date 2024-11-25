@@ -92,7 +92,7 @@ from MetaSAG import SNPStrain as snp
 
 #分箱预处理
 
-BinDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/SNPStrain/input/SingleBin/SGB6796'
+BinDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/SNPStrain/input/SingleBin/SGB6796' #1.5Gb
 
 ResultDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/SNPStrain/result/SingleBin/SGB6796'
 
@@ -100,7 +100,13 @@ SpeciesName='SGB6796'
 
 SingleBin=snp.SingleBin(BinDir,ResultDir,SpeciesName)
 
+snap_aligner = '/data_alluser/singleCellMicrobiome/dmy_test/tools/SNAP/snap-aligner'
+
+bcftools = '/data_alluser/singleCellMicrobiome/dmy_test/tools/bcftools/bcftools-1.18/bcftools'
+
 SingleBin.SingleBinPrepare(bcftools=bcftools,snap_aligner=snap_aligner,ReadsEnd='Pair')
+#SingleBinPrepare took 216.9003 seconds to execute.
+
 
 #查询去除SNP/细胞的个数
 
@@ -119,7 +125,7 @@ SingleBin.DropCellNum  #  3
 #根据SingleBinPrepare()得到的umap图确定分割簇的个数
 
 SingleBin.SingleBinSplit(2)
-
+#SingleBinSplit took 1.2961 seconds to execute.
 ```
 
 
@@ -202,6 +208,7 @@ from MetaSAG import SNPStrain as snp
 
 #分箱预处理
 
+#fasta + fastq 14Gb
 fastaDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/SNPStrain/input/AllBin/fasta'
 
 fastqDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/SNPStrain/input/AllBin/fastq'
@@ -217,12 +224,13 @@ snap_aligner = '/data_alluser/singleCellMicrobiome/dmy_test/tools/SNAP/snap-alig
 bcftools = '/data_alluser/singleCellMicrobiome/dmy_test/tools/bcftools/bcftools-1.18/bcftools'
 
 AllBin.AllBinPrepare(bcftools=bcftools,snap_aligner=snap_aligner,ReadsEnd='Pair')
-
+#AllBinPrepare took 3736.5503 seconds to execute.
 
 #分箱
 #注意分箱前根据结果图片,在ResultDir/BinClusterAnno.txt文件中填写每个箱合适的分簇数
 
 AllBin.AllBinSplit()
+#AllBinSplit took 43.4115 seconds to execute
 
 
 ```

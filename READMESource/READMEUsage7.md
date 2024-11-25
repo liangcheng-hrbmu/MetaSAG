@@ -170,13 +170,14 @@ from MetaSAG import CellHGT as hgt
 
 #得到两两基因组(物种水平)之间的水平基因转移序列 HGT.fasta
 
-fastaDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/CellHGT/input/testSpeciesFasta'
+fastaDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/CellHGT/input/testSpeciesFasta' #292Mb
 
 HGTTemp='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/CellHGT/result/SpeciesHGTResult'
 
 obj=hgt.CellHGT(fastaDir,HGTTemp)
 
 obj.SpeciesHGT()
+#SpeciesHGT took 5402.5489 seconds to execute.
 
 
 
@@ -186,12 +187,12 @@ obj.SpeciesHGT()
 TreeAnno='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/CellHGT/input/SpeciesAnno'
 
 obj.HGTSpeciesPlot(TreeAnno)
-
+# HGTSpeciesPlot took 0.0513 seconds to execute.
 
 #对水平基因转移Contig注释基因并根据相似性聚类统计。
 
 obj.HGTSpeciesAnno(TreeAnno,prokka_env='prokka',cdhit_env='base',emapper_env='eggnog-mapper2',emapper_DB='/data_alluser/public/database/eggnogDB/')
-
+# HGTSpeciesAnno took 433.1531 seconds to execute.
 
 ```
 

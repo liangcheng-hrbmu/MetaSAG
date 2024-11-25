@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: MetaSAG
-Version: 1.0.18
+Version: 1.0.20
 Summary: Just Test PyPI Package
 Home-page: https://github.com
 Author: DMY
@@ -17,7 +17,7 @@ Description:
         In a single sample, **single-cell microbial genome droplet sequencing technology** can generate tens of thousands of droplet short-read sequencing data at a time.
         **MetaSAG** enables **efficient and easy** procedural bioinformatics analysis of large raw sequencing data.
         
-        ![Framework](MetaSAG/READMESource/Framework.png)
+        ![Framework](READMESource/Framework.png)
         
         
         ## Table of Contents
@@ -68,7 +68,7 @@ Description:
         MetaSAG requires Python version >= 3.8.0, R version >= 4.2.2, 
         other tools or packages you need and their version we list here:
         ```
-        [Tools we recommand](MetaSAG/READMESource/ReadMETool.md)
+        [Tools we recommand](READMESource/ReadMETool.md)
         
         
         
@@ -79,9 +79,9 @@ Description:
         
         
         ## Usage
-        -  [**Step 1. Distribute the reads in the sample to a file of individual droplets.**](MetaSAG/READMEUsage1.md)
+        -  [**Step 1. Distribute the reads in the sample to a file of individual droplets.**](READMESource/READMEUsage1.md)
         -  [**Step 2. Filter low-quality cells**](READMESource/READMEUsage2.md)
-        -  [**Step 3. MetaPhlAn4 annotates the reads and classifies droplets**](READMEUsage3.md)
+        -  [**Step 3. MetaPhlAn4 annotates the reads and classifies droplets**](READMESource/READMEUsage3.md)
         -  [**Step 4. Quality control and integration annotation of assembled genome**](READMESource/READMEUsage4.md)
         -  [**Step 5. Build phylogenetic tree**](READMESource/READMEUsage5.md)
         -  [**Step 6. Species to Strain resolved genomes**](READMESource/READMEUsage6.md)

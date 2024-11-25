@@ -517,38 +517,37 @@ class CellHGT():
             PhylumColor_dict = CellHGT.PHY_COLOR
             SpeciesPhylum['Phylum_Color'] = SpeciesPhylum['Phylum'].apply(lambda s: PhylumColor_dict[s])
 
-            HGTNodeAnno = os.path.join(HGTTemp, 'HGTNodeAnno.txt')
-            HGTLineAnno = os.path.join(HGTTemp, 'HGTLineAnno.txt')
+        HGTNodeAnno = os.path.join(HGTTemp, 'HGTNodeAnno.txt')
+        HGTLineAnno = os.path.join(HGTTemp, 'HGTLineAnno.txt')
 
-            # 填写HGTNodeAnno.txt文件
+        # 填写HGTNodeAnno.txt文件
+        with open(HGTNodeAnno, 'a') as input1:
+            input1.write('TREE_COLORS\nSEPARATOR TAB\nDATA\n')
+
+        for index, row in SpeciesPhylum.iterrows():
+            row = str(row['SpeciesID']) + '\trange\t' + str(row['Phylum_Color']) + '\t' + str(row['Phylum']) + '\n'
             with open(HGTNodeAnno, 'a') as input1:
-                input1.write('TREE_COLORS\nSEPARATOR TAB\nDATA\n')
+                input1.write(row)
 
-            for index, row in SpeciesPhylum.iterrows():
-                row = str(row['SpeciesID']) + '\trange\t' + str(row['Phylum_Color']) + '\t' + str(row['Phylum']) + '\n'
-                with open(HGTNodeAnno, 'a') as input1:
-                    input1.write(row)
+        # 填写HGTLineAnno.txt文件
+        with open(HGTLineAnno, 'w') as input1:
+            input1.write('DATASET_CONNECTION\nSEPARATOR COMMA\nDATASET_LABEL,example connections\nCOLOR,#ff0ff0\nDRAW_ARROWS,0\nLOOP_SIZE,100\nMAXIMUM_LINE_WIDTH,10\nCURVE_ANGLE,-50\nCENTER_CURVES,0\nALIGN_TO_LABELS,1\nDATA\n')
 
-            # 填写HGTLineAnno.txt文件
-            with open(HGTLineAnno, 'w') as input1:
-                input1.write(
-                    'DATASET_CONNECTION\nSEPARATOR COMMA\nDATASET_LABEL,example connections\nCOLOR,#ff0ff0\nDRAW_ARROWS,0\nLOOP_SIZE,100\nMAXIMUM_LINE_WIDTH,10\nCURVE_ANGLE,-50\nCENTER_CURVES,0\nALIGN_TO_LABELS,1\nDATA\n')
+        # 判断HGTNumSpecies Species1与Species2的门是否相同，如果相同，线的颜色为门颜色，否则为灰色
+        for index, row in HGTNumSpecies.iterrows():
+            Species1Phylum = SpeciesAnno_dict[row['Species1']]
+            Species2Phylum = SpeciesAnno_dict[row['Species2']]
 
-            # 判断HGTNumSpecies Species1与Species2的门是否相同，如果相同，线的颜色为门颜色，否则为灰色
-            for index, row in HGTNumSpecies.iterrows():
-                Species1Phylum = SpeciesAnno_dict[row['Species1']]
-                Species2Phylum = SpeciesAnno_dict[row['Species2']]
+            if Species1Phylum == Species2Phylum:
+                HGTPhylum = Species1Phylum
+                Color = PhylumColor_dict[HGTPhylum]
+            else:
+                HGTPhylum = 'Diff'
+                Color = 'grey'
 
-                if Species1Phylum == Species2Phylum:
-                    HGTPhylum = Species1Phylum
-                    Color = PhylumColor_dict[HGTPhylum]
-                else:
-                    HGTPhylum = 'Diff'
-                    Color = 'grey'
-
-                with open(HGTLineAnno, 'a') as input1:
-                    row = str(row['Species1']) + ',' + str(row['Species2']) + ',' + '1,' + Color + ',dashed,xxxx\n'
-                    input1.write(row)
+            with open(HGTLineAnno, 'a') as input1:
+                row = str(row['Species1']) + ',' + str(row['Species2']) + ',' + '1,' + Color + ',dashed,xxxx\n'
+                input1.write(row)
 
     '''
     HGTAnno函数是对SpeciesHGT或StrainHGT得到的HGT.fasta文件中

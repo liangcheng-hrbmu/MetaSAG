@@ -693,6 +693,7 @@ class AllBin():
             #SingleBinPrepare(BinDir, ResultDirSingle, str(Cluster), bcftools=bcftools, snap_aligner=snap_aligner, env=env, ReadsEnd=ReadsEnd)
             sbp.SingleBinPrepare(bcftools=bcftools, snap_aligner=snap_aligner, env=env, ReadsEnd=ReadsEnd)
 
+
     def SingleBinSplit(self,PrepareDir, ClusterNum, Species):
         ClusterNum = int(ClusterNum)
 

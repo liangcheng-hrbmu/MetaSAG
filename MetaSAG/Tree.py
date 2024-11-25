@@ -129,6 +129,7 @@ def BuildTree(FastaDir,TreeTemp,env=None):
 # Bin Phylum CellNum Color 第一种，为每个Phylum设置了Color(这种比较简单)
 # Bin Phylum CellNum 第二种，没有为Phylum设置Color(自己为不常见Phylum随机设置颜色，常见Phylum的Color直接在PHY_COLOR中选择)
 
+@timeit
 def itolPlot(BinAnno,Anno):
     #创建目录
     if not os.path.exists(Anno):

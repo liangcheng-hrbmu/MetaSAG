@@ -30,7 +30,10 @@ MetaSAG/trimmomatic/trimmomatic-0.36.jar
 READMESource/1stDerivate.png
 READMESource/2ndDerivate.png
 READMESource/CDF_BCReads.png
+READMESource/DoubleCell.png
 READMESource/Framework.png
+READMESource/HGT_Tree.png
+READMESource/HUMAnNPath.png
 READMESource/READMEUsage1.md
 READMESource/READMEUsage2.md
 READMESource/READMEUsage3.md
@@ -40,4 +43,11 @@ READMESource/READMEUsage6.md
 READMESource/READMEUsage7.md
 READMESource/READMEUsage8.md
 READMESource/ReadMETool.md
+READMESource/SNP_Pheatmap.png
+READMESource/SNP_Tree.png
+READMESource/SNP_Umap.png
+READMESource/SNP_Umap_prep.png
+READMESource/Seurat_Pheatmap.png
+READMESource/Seurat_Umap.png
 READMESource/StackCellsPicture.png
+READMESource/Tree.png

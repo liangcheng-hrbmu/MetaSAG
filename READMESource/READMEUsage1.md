@@ -51,8 +51,9 @@ AAAAAE#EEEEEEEEEEEEEEEEEEEEEEEAEEEEEEEEEEEEEEEEEEEEEEEEEEE6/EEEEEEAEEAAEEE/EEEEE
 ```
 #执行代码
 
-import BarcodeDeal as bcd
+from MetaSAG import BarcodeDeal as bcd
 
+#inputFastq 文件大小为11Mb
 inputFastq = 'zszshhh/testData/BarcodeDeal/input/test.fastq'
 
 CellBarn = './testData/BarcodeDeal/result/CellBarn_single'
@@ -62,9 +63,22 @@ bcd.SAGSplit(inputFastq,CellBarn)
 
 ```
 
+```
+#结果
+
+{'W1': 774, 'Len': 0, 'BC': 1533}
+SAGSplit took 1.8001 seconds to execute.
+
+```
+
+
+
+
+
 
 ```
 #结果文件示例
+
 #318.fastq
 #该文件中每条reads的标头以@Barcode_ID:开头
 
@@ -84,8 +98,9 @@ AAAA/E/EEAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE6EEEEEEEEEAEA<EEE//EEA
 ```
 #执行代码
 
-import BarcodeDeal as bcd
+from MetaSAG import BarcodeDeal as bcd
 
+#test_R1.fastq 与 test_R2.fastq 各11Mb
 inputFastq = ['zszshhh/testData/BarcodeDeal/input/test_R1.fastq','zszshhh/testData/BarcodeDeal/input/test_R2.fastq']
 
 CellBarn = './testData/BarcodeDeal/result/CellBarn_pair'
@@ -95,6 +110,16 @@ bcd.SAGSplit(inputFastq,CellBarn)
 
 ```
 
+```
+#结果
+
+{'W1': 774, 'Len': 0, 'BC': 1533}
+SAGSplit took 2.3399 seconds to execute.
+
+```
+
+
+
 
 
 ## Func 2：trim(inputFastqDir,trimDir)
@@ -103,8 +128,8 @@ bcd.SAGSplit(inputFastq,CellBarn)
 
 - **必选参数：**
 ```
-inputFastqDir   --  每个液滴测序文件存放的路径<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    如果是单端fastq文件，文件名必须以.fastq结尾；<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+inputFastqDir   --  每个液滴测序文件存放的路径
+                    如果是单端fastq文件，文件名必须以.fastq结尾；
                     如果是双端fastq文件，文件名必须以_R1.fastq或_R2.fastq结尾。
 
 trimDir         --  接头去除后的结果文件存放位置
@@ -113,8 +138,8 @@ trimDir         --  接头去除后的结果文件存放位置
 
 - **可选参数：**
 ```
-ReadsEnd        --  输入液滴测序文件是单端还是双端<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-                    默认为单端，ReadsEnd='Single'；<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ReadsEnd        --  输入液滴测序文件是单端还是双端
+                    默认为单端，ReadsEnd='Single'；
                     如果是双端，修改ReadsEnd='Pair'.
 
 
@@ -129,4 +154,50 @@ SLIDINGWINDOW   --  jar包参数,默认为'4:20'
 MINLEN          --  jar包参数,默认为30
 
 threads         --  jar包参数,默认为12
+```
+
+
+对于单端数据
+```
+#执行代码示例
+
+from MetaSAG import BarcodeDeal as bcd
+
+inputCellBarn='./testData/BarcodeDeal/result/CellBarn_single'
+
+trimBarn='./testData/BarcodeDeal/result/CellTrim_single'
+
+bcd.trim(inputCellBarn,trimBarn)
+
+```
+
+
+```
+#结果
+
+trim took 420.1405 seconds to execute.
+
+```
+
+
+对于双端数据
+```
+#执行代码示例
+
+from MetaSAG import BarcodeDeal as bcd
+
+inputCellBarn='./testData/BarcodeDeal/result/CellBarn_pair'
+
+trimBarn='./testData/BarcodeDeal/result/CellTrim_pair'
+
+bcd.trim(inputCellBarn,trimBarn,ReadsEnd='Pair')
+
+```
+
+
+```
+#结果
+
+trim took 663.4608 seconds to execute.
+
 ```

@@ -15,6 +15,19 @@ import subprocess
 
 '''
 
+def timeit(func):
+    def wrapper(*args,**kwargs):
+        start_time = time.time()
+        result = func(*args,**kwargs)
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"{func.__name__} took {elapsed_time:.4f} seconds to execute.")
+        return result
+    wrapper.__doc__=func.__doc__
+    return wrapper
+
+
+
 PYTHONDIR = os.path.dirname(os.path.abspath(__file__))
 def removeShortContig(inputfastafile,outputfastafile,minlen=500):
     fasta={}
@@ -67,7 +80,7 @@ def removeShortContig(inputfastafile,outputfastafile,minlen=500):
 
 
 
-
+@timeit
 def Summary(FastaSGB,CheckmFile,GTDBFile,outputSummary=None):
 
     mpa = pd.read_csv(os.path.join(PYTHONDIR,'mpa_vOct22_CHOCOPhlAnSGB_202403_species.txt'),sep='\t',header=None)
@@ -142,7 +155,7 @@ def Summary(FastaSGB,CheckmFile,GTDBFile,outputSummary=None):
     return SummaryResult
 
 
-
+@timeit
 def FastaQC1(FastaDir,FastaOut,minlen=500):
     #该函数只进行去除短Contig的操作
     #创建目录
@@ -155,7 +168,7 @@ def FastaQC1(FastaDir,FastaOut,minlen=500):
             removeShortContig(os.path.join(FastaDir, filename),os.path.join(FastaOut, filename),minlen=minlen)
 
 
-
+@timeit
 def FastaQC2(FastaDir,FastaOut,CheckmFile,FastgDir=None):
     #该函数
     #(1)对去除短contig的fasta文件根据Checkm结果文件，返回哪些文件是合格基因组[Pass]，哪些文件虽然不合格但是可以Bandage校正[Bandage]，哪些基因组文件由于完整度过小可以直接放弃[Abandon]

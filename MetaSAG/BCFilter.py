@@ -144,8 +144,8 @@ class BCFilter():
         BC_Count.to_csv(os.path.join(outputDir,'bcread.txt'),sep='\t',index=False)
         self.BC_Count=BC_Count
 
-
-    def getMinReads(self):
+    @timeit
+    def getMinReads(self,FirstDrv_xlim=[-1000,5000],SecondDrv_xlim=[-1000,5000]):
         outputDir = self.outputdir
         ######Step2,累积分布求导绘图######
         #BC_Count = pd.read_csv(BC_Count,sep='\t',header=0)
@@ -202,7 +202,9 @@ class BCFilter():
         x=reads_prop['reads_num']
         y=d1
         plt.scatter(x,y,s=1)
-        plt.xlim(-1000,5000)
+        xlim1=FirstDrv_xlim[0]
+        xlim2=FirstDrv_xlim[1]
+        plt.xlim(xlim1,xlim2)
         plt.xlabel('reads_num')
         plt.ylabel('D1')
         plt.title('Scatter Plot of reads number and D1')
@@ -224,7 +226,9 @@ class BCFilter():
         x=reads_prop['reads_num']
         y=d2
         plt.scatter(x,y,s=1)
-        plt.xlim(-1000,5000)
+        xlim1 = SecondDrv_xlim[0]
+        xlim2 = SecondDrv_xlim[1]
+        plt.xlim(xlim1,xlim2)
         plt.xlabel('reads_num')
         plt.ylabel('D2')
         plt.title('Scatter Plot of reads number and D2')
@@ -281,8 +285,7 @@ class BCFilter():
         
     '''
 
-
-
+    @timeit
     def Sam2Cell(self):
         inputfastq=self.inputfastq
         CellBarnDir=os.path.join(self.outputdir,'CellBarnDir')
@@ -316,6 +319,19 @@ class BCFilter():
 
 
 
+
+
+def timeit(func):
+    def wrapper(*args,**kwargs):
+        start_time = time.time()
+        result = func(*args,**kwargs)
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"{func.__name__} took {elapsed_time:.4f} seconds to execute.")
+        return result
+    return wrapper
+
+@timeit
 def SamsBCFilterStack(Sam,SavedCell,AllCell,outputDir):
     #AllCell = [3132, 4557, 2321, 3433, 4500]
     #SavedCell = [2000,3000,1734,2222,2000]

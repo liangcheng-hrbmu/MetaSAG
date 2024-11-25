@@ -106,3 +106,43 @@ Eg. CellAnno (SeuratResult/KnownSGBCell_ClusterCell.txt)
 - **结果：**
 
 ![HUMAnNPath](HUMAnNPath.png)
+
+
+
+```
+
+#执行代码示例
+
+from MetaSAG import HUMAnNPath as hp
+
+#创建HP对象
+
+fastqDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/HUMAnNPath/input/fastq' #292Mb
+
+resultDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/HUMAnNPath/result'
+
+obj=hp.HP(fastqDir,resultDir)
+
+
+
+#对每个fastq文件Diamond比对
+
+obj.Diamond(DiamondDB='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4/Func_Anno/Humann3/DB/uniref/uniref90_201901b_full.dmnd')
+
+# obj.DiamondDir 
+
+# '/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/HUMAnNPath/result/DiamondDir'
+# 如果用户自己进行Diamond比对，可以修改obj.DiamondDir的值来指定Diamond比对结果文件存放的目录，进行后面函数的分析。
+# obj.DiamondDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/HUMAnNPath/input/Diamond'
+obj.Uniref2Matrix()
+# Uniref2Matrix took 4.7900 seconds to execute.
+obj.SeuratCluster()
+# SeuratCluster took 16.6086 seconds to execute.
+
+cellAnno='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData/testData/HUMAnNPath/result/SeuratResult/KnownSGBCell_ClusterCell.txt'
+obj.HUMAnNPath(cellAnno,'Cluster',HUMAnNenv='humann')
+# HUMAnNPath took 581.9383 seconds to execute.
+
+
+
+```

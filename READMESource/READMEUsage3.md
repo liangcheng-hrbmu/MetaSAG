@@ -29,16 +29,17 @@ DB      --      MetaPhlAnN4软件参考数据库路径
 ```
 #执行代码示例
 
-import MicrobePlus.MetaPhlanAsignClass as mpa
+from MetaSAG import MetaPhlAnAsign as mpa
 
-inputFastq = './testData/MetaPhlanAsign/input/Sam0516.fastq'
+#test.fastq 61Mb
+inputFastq = './testData/MetaPhlAnAsign/input/test.fastq'
 
 MPOut = './testData/MetaPhlanAsign/result/'
 
-SamName = 'Sam0516'
+SamName = 'test'
 
 mpa.MPAnno(inputFastq,MPOut,SamName,env='metaphlan4.1',DB='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/DB_Jun23/')
-
+# MPAnno took 170.1611 seconds to execute.
 
 ```
 ## Class：MPBowtie(inputBowtie,outputDir)
@@ -280,26 +281,24 @@ ReadsEnd    --      输入液滴测序文件是单端还是双端
 
 from MetaSAG import MetaPhlAnAsign as mpa
 
-
-
 #MetaPhlAnN4注释
 
-inputFastq = './testData/MetaPhlanAsign/input/Sam0516.fastq'
+inputFastq = './testData/MetaPhlanAsign/input/test.fastq'
 
 output = './testData/MetaPhlanAsign/result/'
 
-Sam = 'Sam0516'
+Sam = 'test'
 
 mpa.MPAnno(inputFastq,output,Sam,env='metaphlan4.1',DB='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/DB_Jun23/')
-
+#MPAnno took 75.6562 seconds to execute.
 
 
 
 #构建MPBowtie对象
 
-input_bowtie='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/MetaPhlanAsign/input/2305_bowtie2' #883Mb
+input_bowtie='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/MetaPhlAnAsign/input/S10_bowtie2' #497Mb
 
-result_dir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/MetaPhlanAsign/result/'
+result_dir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/MetaPhlAnAsign/result/'
 
 obj=mpa.MPBowtie(input_bowtie,result_dir) 
 
@@ -309,6 +308,8 @@ obj=mpa.MPBowtie(input_bowtie,result_dir)
 #统计细胞注释情况
 
 obj.CellSGBStatistic() 
+
+CellSGBStatistic took 60.7226 seconds to execute.
 
 #查看结果
 
@@ -324,9 +325,10 @@ obj.Cell_Erro_Count
 
 import pandas as pd
 
-BC_Count=pd.read_csv('./testData/MetaPhlanAsign/input/Sam0516_bcread.txt',sep='\t',header=0)
+BC_Count=pd.read_csv('./testData/MetaPhlAnAsign/input/S10_bcread.txt',sep='\t',header=0)
 
 obj.CellAsign(BC_Count) 
+#CellAsign took 175.5504 seconds to execute.
 
 #查看结果
 
@@ -349,29 +351,29 @@ obj.Cell_Anno
 #统计噬菌体reads的分布
 
 obj.HostPhage()
-
+#HostPhage took 0.5502 seconds to execute.
 
 
 
 #查看多胞液滴物种的分布。
 
-CellBarn='/data_alluser/singleCellMicrobiome/rawdata_bdwp/202405_standard/all/'
+#CellBarn='/data_alluser/singleCellMicrobiome/rawdata_bdwp/202405_standard/all/'
 
-obj.DoubleCellKraken(CellBarn,env='kraken',KrakenDB='/data_alluser/public/database/k2_standard_20230605/',ReadsEnd='Pair')
+CellBarn='/data_alluser/singleCellMicrobiome/dmy_test/SAGget/S10_real_SAGs/'
 
-
+obj.DoubleCellKraken(CellBarn,env='kraken',KrakenDB='/data_alluser/public/database/k2_standard_20230605/',ReadsEnd='Single')
+# DoubleCellKraken took 3466.3195 seconds to execute.
 
 
 #根据obj.KnownCellAssem提供的细胞，进行组装
+# 1185个Cell
 
-obj.KnownCellAssem=pd.read_csv('/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/MetaPhlanAsign/result/KnownCellAssemShort.txt',sep='\t',header=0)
+#obj.KnownCellAssem=pd.read_csv('/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/MetaPhlanAsign/result/KnownCellAssemShort.txt',sep='\t',header=0)
 
-CellBarn='/data_alluser/singleCellMicrobiome/rawdata_bdwp/202405_standard/all/'
+#CellBarn='/data_alluser/singleCellMicrobiome/rawdata_bdwp/202405_standard/all/'
+CellBarn='/data_alluser/singleCellMicrobiome/dmy_test/SAGget/S10_real_SAGs/'
 
-obj.CellAssem(CellBarn,ReadsEnd='Pair')
-
+obj.CellAssem(CellBarn,ReadsEnd='Single')
+#CellAssem took 3404.0547 seconds to execute.
 
 ```
-
-
-

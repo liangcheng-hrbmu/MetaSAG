@@ -176,6 +176,7 @@ class MPBowtie():
         UnknownSGBFile = os.path.join(outputDir, 'UnknownSGB.txt')
         UnAsignedSGBFile = os.path.join(outputDir, 'UnAsignedSGB.txt')
         KnownCellAssemFile = os.path.join(outputDir, 'KnownCellAssem_top50.txt')
+        CellAnnoFile = os.path.join(outputDir, 'CellAnno.txt')
 
         # 1. 统计每个细胞——每个SGB——SGB.annoreads——total.annoreads——SGB.rate——allreads
         Cell_SGB_Count = self.Cell_SGB_Count
@@ -283,8 +284,9 @@ class MPBowtie():
         type_temp = ['KnownCell'] * len(self.KnownCell['cell']) + ['DoubleCell'] * len(self.DoubleCell['cell'].unique()) + ['UnknownCell'] * len(self.UnknownCell) + ['UnAsignedCell'] * len(self.UnAsignedCell['cell'])
         sgb_temp = self.KnownCell['SGB'].tolist() + ['NoSGB'] * (len(cell_temp) - len(self.KnownCell['cell']))
         Cell_Anno = pd.DataFrame({'Cell':cell_temp,'Type':type_temp,'SGB':sgb_temp})
-
+        Cell_Anno.to_csv(CellAnnoFile,index=False,sep='\t')
         self.Cell_Anno = Cell_Anno
+
 
     @timeit
     def HostPhage(self,Group='SGB',cumThresh=0.8 ,MinCellPhage=50):

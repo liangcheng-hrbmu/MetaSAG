@@ -7,7 +7,7 @@ def readme_file():
 
 setup(
     name='MetaSAG',
-    version='1.0.18',
+    version='1.0.20',
     description='Just Test PyPI Package',
     long_description=readme_file(),
     long_description_content_type="text/markdown",

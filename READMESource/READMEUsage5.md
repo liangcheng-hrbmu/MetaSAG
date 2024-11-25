@@ -84,12 +84,12 @@ from MetaSAG import Tree as tree
 
 #构建树
 
-FastaDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/Tree/input'
+FastaDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/Tree/input' #292Mb
 
 TreeTemp='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/Tree/result'
 
 tree.BuildTree(FastaDir,TreeTemp,env='anvio-7.1')
-
+#BuildTree took 8312.0662 seconds to execute.
 
 
 

@@ -43,6 +43,16 @@ Eg. bcread.txt
 - **函数功能：**
 根据一个样本中细胞reads数目的分布，找出这个样本中去除少reads细胞的min_reads阈值。
 
+- **可选参数：**
+```
+FirstDrv_xlim       --      一阶导绘图横坐标范围
+                            默认为[-1000,5000]
+                            
+SecondDrv_xlim      --      二阶导绘图横坐标范围
+                            默认为[-1000,5000]
+                            
+```
+
 
 ## Func 3：BCMinReads()
 
@@ -55,15 +65,18 @@ Eg. bcread.txt
 ```
 #执行代码
 
-import MetaSAG.BCFilter as bcf
+from MetaSAG import BCFilter as bcf
 
+#S10_Tag.fastq 6.1G
 obj=bcf.BCFilter('./testData/BCFilter/input/S10_Tag.fastq','./testData/BCFilter/result/')
 
 obj.CellCountStatistic()
+#CellCountStatistic took 21.4586 seconds to execute.
 
 # obj.BC_Count  展示每个细胞中有多少条reads的数据框（可修改）
 
 obj.getMinReads()
+#getMinReads took 3.0193 seconds to execute.
 
 # obj.min_reads 展示该样本应选取的最低reads阈值（可修改）
 
@@ -111,10 +124,11 @@ Sam=['S5','S6','S7','S8','S10']
 
 outputDir=’./testData/BCFilter/result/’
 
-import MetaSAG.BCfilter as bcf
+from MetaSAG import BCFilter as bcf
 
 bcf.SamBCFilterStack(Sam,SavedCell,AllCell,'./testData/BCFilter/result/')
 
+#SamsBCFilterStack took 0.1096 seconds to execute.
 
 ```
 
