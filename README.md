@@ -9,7 +9,7 @@
 In a single sample, **single-cell microbial genome droplet sequencing technology** can generate tens of thousands of droplet short-read sequencing data at a time.
 **MetaSAG** enables **efficient and easy** procedural bioinformatics analysis of large raw sequencing data.
 
-![Framework](READMESource/Framework.png)
+![Framework](READMESource/Framework2.png)
 
 
 ## Table of Contents
