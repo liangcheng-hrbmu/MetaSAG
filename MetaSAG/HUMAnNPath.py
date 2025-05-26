@@ -129,7 +129,7 @@ class HP():
 
     # 输入AllSGB_matrix进行细胞聚类，得到聚类结果
     @timeit
-    def SeuratCluster(self):
+    def SeuratCluster(self,nfeatures=20000,npcs=30,FindNeighborsDim="1:10",FindClustersRes=0.5,UmapPDFWidth=6,UmapPDFHeight=4,DimPlotMethod='umap',FindAllMarkersPCT=0.25,FindAllMarkerslogFC=0.25,topN=10,HeatmapPDFWidth=12,HeatmapPDFHeight=8):
 
         SeuratResult = os.path.join(self.ResultDir,'SeuratResult')
         AllSGB_matrix = self.AllSGB_matrix
@@ -137,7 +137,8 @@ class HP():
         if not os.path.exists(SeuratResult):
             os.makedirs(SeuratResult, exist_ok=True)
         SeuratSGB_R = os.path.join(self.PYTHONDIR, 'SeuratSGB.R')
-        command = 'Rscript ' + SeuratSGB_R + ' -i ' + AllSGB_matrix + ' -o ' + SeuratResult
+        #command = 'Rscript ' + SeuratSGB_R + ' -i ' + AllSGB_matrix + ' -o ' + SeuratResult
+        command =f'Rscript {SeuratSGB_R} -i {AllSGB_matrix} -o {SeuratResult} -nfeatures {nfeatures} -npcs {npcs} -FindNeighborsDim {FindNeighborsDim} -FindClustersRes {FindClustersRes} -UmapPDFWidth {UmapPDFWidth} -UmapPDFHeight {UmapPDFHeight} -DimPlotMethod {DimPlotMethod} -FindAllMarkersPCT {FindAllMarkersPCT} -FindAllMarkerslogFC {FindAllMarkerslogFC} -topN {topN} -HeatmapPDFWidth {HeatmapPDFWidth} -HeatmapPDFHeight {HeatmapPDFHeight}'
         subprocess.call(command, shell=True)
 
     @timeit

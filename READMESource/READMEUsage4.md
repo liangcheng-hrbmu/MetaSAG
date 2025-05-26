@@ -99,7 +99,6 @@ Eg. Summary.txt
 from MetaSAG import BinQCAnno as bqa
 
 
-
 #去除长度<500bp的contig
 
 FastaDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/BinQCAnno/input/QC1Fasta'

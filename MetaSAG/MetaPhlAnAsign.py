@@ -4,6 +4,7 @@ import sys
 import subprocess
 import os
 import numpy as np
++2345
 import pandas as pd
 from collections import Counter
 import warnings
@@ -65,7 +66,7 @@ def MPAnno(inputFastq, MPOut, SamName, env=None, DB=None):
     if ReadsEnd == 'Single':
         inputFastq = inputFastq[0]
     else:
-        inputFastq = inputFastq1 + ' ' + inputFastq2
+        inputFastq = inputFastq1 + ',' + inputFastq2
 
 
     if DB is not None:
@@ -102,16 +103,16 @@ class MPBowtie():
             os.makedirs(outputDir, exist_ok=True)
 
         Cell_SGB = os.path.join(outputDir, 'Cell_SGB.txt')
-        Cell_Erro = os.path.join(outputDir, 'Cell_Erro.txt')
+        Cell_Other = os.path.join(outputDir, 'Cell_Other.txt')
         Cell_SGB_Count = os.path.join(outputDir, 'Cell_SGB_Count.txt')
-        Cell_Erro_Count = os.path.join(outputDir, 'Cell_Erro_Count.txt')
+        Cell_Other_Count = os.path.join(outputDir, 'Cell_Other_Count.txt')
         AllCellSummary = os.path.join(outputDir, 'AllCellSummary.txt')
 
         # Step1 统计每个细胞 * 每个SGB的count
         with open(Cell_SGB, 'w') as output:
             output.write('Cell\tSGB\n')
 
-        with open(Cell_Erro, 'w') as output:
+        with open(Cell_Other, 'w') as output:
             output.write('Cell\tOther\n')
 
         SGB_freq_dict = {}
@@ -127,7 +128,7 @@ class MPBowtie():
                 pattern = r"SGB\d{0,20}"
                 SGB = re.search(pattern, line)
                 if SGB is None:
-                    with open(Cell_Erro, 'a') as output:
+                    with open(Cell_Other, 'a') as output:
                         anno = line.split('\t')[1]
                         anno = anno.strip()
                         output.write(cell + '\t' + anno + '\n')
@@ -155,13 +156,13 @@ class MPBowtie():
 
         for cell, counter in Other_freq_dict.items():
             for other, count in counter.items():
-                with open(Cell_Erro_Count, 'a') as output:
+                with open(Cell_Other_Count, 'a') as output:
                     output.write(str(cell) + '\t' + str(other) + '\t' + str(count) + '\n')
 
 
 
         self.Cell_SGB_Count = pd.read_csv(Cell_SGB_Count, sep='\t', header=None)
-        self.Cell_Erro_Count = pd.read_csv(Cell_Erro_Count, sep='\t', header=None)
+        self.Cell_Other_Count = pd.read_csv(Cell_Other_Count, sep='\t', header=None)
 
     @timeit
     def CellAsign(self, BC_Count, Min_Reads=None ,total_annoreads = 200,SGB_rate = 0.8,Double_SGB_rate = 0.2, Double_All_rate = 0.8, Double_Annoreads = 200,Unknown_Allreads = 500, Unknown_Annoreads = 10, SGB_topCell=50):
@@ -290,8 +291,8 @@ class MPBowtie():
 
     @timeit
     def HostPhage(self,Group='SGB',cumThresh=0.8 ,MinCellPhage=50):
-        self.Cell_Erro_Count.columns = ['Cell','Other','count']
-        CellErro = self.Cell_Erro_Count
+        self.Cell_Other_Count.columns = ['Cell','Other','count']
+        CellOther = self.Cell_Other_Count
         ResultDir = os.path.join(self.outputDir,'HostPhageResult')
         CellAnno = self.Cell_Anno
 
@@ -300,7 +301,7 @@ class MPBowtie():
         if not os.path.exists(ResultDir):
             os.makedirs(ResultDir, exist_ok=True)
 
-        frequency = CellErro['Other'].value_counts()
+        frequency = CellOther['Other'].value_counts()
         frequency = pd.DataFrame(frequency)
         frequency_sorted = frequency.sort_values(by='count', ascending=False)
         frequency_sorted = pd.DataFrame(frequency_sorted)
@@ -315,7 +316,7 @@ class MPBowtie():
         MainPhage = result_df['Other'].tolist()
 
         # 结合CellErro,Cell_Anno构建cell phage group数据框
-        CellPhageCluster = pd.merge(CellErro, CellAnno, on='Cell', how='left')
+        CellPhageCluster = pd.merge(CellOther, CellAnno, on='Cell', how='left')
         PhageClusterCount = CellPhageCluster.groupby(['Other', Group]).size().reset_index(name='count')
         # PhageClusterCount.to_csv('./PhageClusterCount.txt',sep='\t',index=False)
 
@@ -364,7 +365,7 @@ class MPBowtie():
         # table1和table2 判断哪些细胞中含有噬菌体
 
         # 先统计cell phage count
-        CellPhageCount = CellErro.groupby(['Other', 'Cell']).size().reset_index(name='count')
+        CellPhageCount = CellOther.groupby(['Other', 'Cell']).size().reset_index(name='count')
         CellPhageCount = pd.merge(CellPhageCount, CellAnno, on='Cell', how='left')
         # CellPhageCount.to_csv('./CellPhageCount.txt', sep='\t', index=False)
 
@@ -487,7 +488,7 @@ class MPBowtie():
 
             elif ReadsEnd == 'Pair':
                 cellFile1 = os.path.join(CellBarn, row['cell']) + '_R1.fastq'
-                cellFile2 = os.path.join(CellBarn, row['cell']) + '_R1.fastq'
+                cellFile2 = os.path.join(CellBarn, row['cell']) + '_R2.fastq'
                 SGB = row['SGB']
                 SGBFastqFile1 = os.path.join(BinFastq, SGB) + '_R1.fastq'
                 SGBFastqFile2 = os.path.join(BinFastq, SGB) + '_R2.fastq'
@@ -526,12 +527,6 @@ class MPBowtie():
 
                 subprocess.call('cp ' + BinFasta + '/' + SGB + '_sc/contigs.fasta ' + SGBFastaFile, shell=True)
                 subprocess.call('cp ' + BinFasta + '/' + SGB + '_sc/assembly_graph.fastg ' + SGBFastgFile, shell=True)
-
-
-
-
-
-
 
 
 '''

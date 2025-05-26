@@ -144,8 +144,6 @@ def FindBarcode(read):
     return index
 
 
-
-
 #如果序列长度合格，并且两个Barcoded + W1都识别到，返回该reads的Barcode编码
 #如果有一项不合格则返回warnings  warning1 = 长度不合格；warning2 = W1未识别；warning3 = Barcode1未识别；warning4 = Barcode2 未识别
 
@@ -155,18 +153,6 @@ def FindBarcode(read):
 
 @timeit
 def SAGSplit(inputFastq,CellBarn,FindBarcode=FindBarcode,warning=['Len','W1','BC'],filterWarning=True):
-    """
-    这是函数SAGSplit()的帮助文档·······
-    这是函数SAGSplit()的帮助文档·······
-    这是函数SAGSplit()的帮助文档·······
-    这是函数SAGSplit()的帮助文档·······
-    这是函数SAGSplit()的帮助文档·······
-    这是函数SAGSplit()的帮助文档·······
-    这是函数SAGSplit()的帮助文档·······
-    这是函数SAGSplit()的帮助文档·······
-    这是函数SAGSplit()的帮助文档·······
-    这是函数SAGSplit()的帮助文档·······
-    """
 
 
     #创建目录：

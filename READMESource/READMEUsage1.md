@@ -20,13 +20,13 @@ CellBarn    --  分割样本后存储液滴文件的结果路径
 
 - **可选参数：**
 ```
-FindBarcode     --  要求输入的是一个用户自己写的函数，该函数只输入一个reads字符串，要求返回一个字符串，该字符串在正常匹配时返回reads所属的Barcode字符串，或者未匹配的原因字符串eg,"Erro","Len","W1","BC"总之能返回一个字符串。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+FindBarcode     --  要求输入的是一个用户自己写的函数，该函数只输入一个reads字符串，要求返回一个字符串，该字符串在正常匹配时返回reads所属的Barcode字符串，或者未匹配的原因字符串eg,"Erro","Len","W1","BC"总之能返回一个字符串。
                     默认为脚本中定义的函数FindBarcode()
 
 warning         --  FindBarcode函数中设定某些reads无法正常匹配Barcode时自编函数返回字符串的情况
                     默认为['Len','W1','BC']
 
-filterWarning   --  如果reads对应的Barcode字符串在warning中，这样的reads写入到单液滴文件中
+filterWarning   --  如果reads对应的Barcode字符串在warning中，这样的reads不写入到单液滴文件中
                     默认为True
 ```
 

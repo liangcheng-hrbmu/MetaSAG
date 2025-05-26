@@ -77,7 +77,50 @@ def removeShortContig(inputfastafile,outputfastafile,minlen=500):
 
     output.close()
 
+def getContigRC(inputfastafile,outputfastafile,outputstatistic,readsLen = 300,ContigRCThreshold = 100):
+    fasta = {}
+    with open(inputfastafile) as input1:
+        while True:
+            line = input1.readline()
+            if len(line) == 0:
+                break
 
+            line = line.replace('\n', '')
+
+            if line.startswith('>'):
+                flag = line
+                fasta[flag] = []
+            else:
+                fasta[flag] += [line]
+    input1.close()
+
+    Node = []
+    Length = []
+    Cov = []
+    ContigRC = []
+    for key in fasta.keys():
+        node = key
+        l = int(key.split('_')[3])
+        cov = float(key.split('_')[5])
+        Node += [node]
+        Length += [l]
+        Cov += [cov]
+
+        temp = (l/readsLen)*cov
+        ContigRC += [temp]
+
+    ContigRCdf = pd.DataFrame({'Node':Node,'Length':Length,'Cov':Cov,'ContigRC':ContigRC})
+    ContigRCdf.to_csv(outputstatistic,index=False,sep='\t')
+    CongtigSaver = ContigRCdf[(ContigRCdf['ContigRC'] >= ContigRCThreshold) & (ContigRCdf['Length'] >= readsLen)]
+    ContigSaver = CongtigSaver['Node'].tolist()
+
+    with open(outputfastafile, 'a') as output:
+        for key, value in fasta.items():
+            if key in ContigSaver:
+                output.write(key + '\n')
+                for line in value:
+                    output.write(line + '\n')
+    return ContigRCdf
 
 
 @timeit
@@ -156,7 +199,7 @@ def Summary(FastaSGB,CheckmFile,GTDBFile,outputSummary=None):
 
 
 @timeit
-def FastaQC1(FastaDir,FastaOut,minlen=500):
+def FastaQC3(FastaDir,FastaOut,minlen=500):
     #该函数只进行去除短Contig的操作
     #创建目录
     if not os.path.exists(FastaOut):
@@ -204,6 +247,20 @@ def FastaQC2(FastaDir,FastaOut,CheckmFile,FastgDir=None):
             target = os.path.join(Abandon, Bin) + '.fasta'
 
         shutil.copy(source, target)
+
+
+def FastaCLQC(FastaDir,FastaOut,readsLen=300,ContigRCThreshold=100):
+    StacDir = os.path.join(FastaOut,'Stac')
+    DirCreate = [FastaOut,StacDir]
+    for dir in DirCreate:
+        if not os.path.exists(FastaOut):
+            os.makedirs(FastaOut,exist_ok=True)
+
+    files = os.listdir(FastaDir)
+    for filename in files:
+        if filename.endswith('.fasta'):
+            StacFile = os.path.join(FastaDir, filename[:-6])
+            getContigRC(os.path.join(FastaDir,filename),os.path.join(FastaOut,filename),StacFile,readsLen=readsLen,ContigRCThreshold=ContigRCThreshold)
 
 
 

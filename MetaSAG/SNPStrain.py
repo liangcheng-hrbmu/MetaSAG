@@ -50,14 +50,6 @@ def timeit(func):
 
 
 
-
-
-
-
-
-
-
-
 class SingleBin():
 
     def __init__(self,BinDir, ResultDir, SpeciesName):
@@ -258,6 +250,7 @@ class SingleBin():
         #print(embedding.shape)
         # print(embedding)
         plt.scatter(embedding[:, 0], embedding[:, 1], s=3)
+
         plt.savefig(os.path.join(output_dirt, file_name.split('_')[0]) + 'sp_call_SNP_umap.svg', format='svg',
                     bbox_inches='tight')
         plt.clf()
@@ -447,7 +440,7 @@ class SingleBin():
             #embedding = pickle.load(f)
 
 
-
+        snp_pd_old = self.snp_pd
         snp_pd = self.snp_pd
         linked = self.linked
         embedding = self.embedding
@@ -468,12 +461,18 @@ class SingleBin():
             plt.scatter(umap_compare_bin['X'], umap_compare_bin['Y'], s=10, c=SingleBin.strain_color_list[j],
                         marker=SingleBin.umap_plot_shape[j])
 
+
+        for j in range(ClusterNum):
+            #计算每个簇的中心位置
+            cluster_points = umap_compare.loc[umap_compare['cluster_hier'] == j]
+            x_center = cluster_points['X'].mean()
+            y_center = cluster_points['Y'].mean()
+            plt.text(x_center,y_center,str(j),fontsize=12,fontweight='bold',color='black',bbox=dict(facecolor='white',alpha=0.8,edgecolor='none'))
         plt.xticks([])
         plt.yticks([])
         plt.ylabel('UMAP dimention 2')
         plt.xlabel('UMAP dimention 1')
-        plt.savefig(os.path.join(PreparePic, Species) + '_sp_call_SNP_umap_final.svg', format='svg',
-                    bbox_inches='tight')
+        plt.savefig(os.path.join(PreparePic, Species) + '_sp_call_SNP_umap_final.svg', format='svg',bbox_inches='tight')
         plt.clf()
 
         ###################################
@@ -579,6 +578,11 @@ class SingleBin():
             for cell in barcode_list_strain[cluster]:
                 with open(os.path.join(PrepareDir, 'StrainCells.txt'), 'a') as output:
                     output.write(str(cluster) + '\t' + str(cell) + '\n')
+
+        self.snp_pd = snp_pd_old
+        self.snp_pd_strain = snp_pd
+
+
 
 '''
 CellAnno文件
@@ -726,6 +730,14 @@ class AllBin():
             plt.scatter(umap_compare_bin['X'], umap_compare_bin['Y'], s=10, c=AllBin.strain_color_list[j],
                         marker=AllBin.umap_plot_shape[j])
 
+        for j in range(ClusterNum):
+            # 计算每个簇的中心位置
+            cluster_points = umap_compare.loc[umap_compare['cluster_hier'] == j]
+            x_center = cluster_points['X'].mean()
+            y_center = cluster_points['Y'].mean()
+            plt.text(x_center, y_center, str(j), fontsize=12, fontweight='bold', color='black',
+                     bbox=dict(facecolor='white', alpha=0.8, edgecolor='none'))
+
         plt.xticks([])
         plt.yticks([])
         plt.ylabel('UMAP dimention 2')
@@ -833,9 +845,14 @@ class AllBin():
         for cluster in range(len(barcode_list_strain)):
             # print('look here is barcode_list_strain:', i)
             # print(barcode_list_strain[i])
-            for cell in barcode_list_strain[cluster]:
-                with open(os.path.join(PrepareDir, 'StrainCells.txt'), 'a') as output:
-                    output.write(str(cluster) + '\t' + str(cell) + '\n')
+            if cluster == (len(barcode_list_strain) - 1):
+                for cell in barcode_list_strain[cluster]:
+                    with open(os.path.join(PrepareDir, 'StrainCells.txt'), 'a') as output:
+                        output.write('Mist'+str(cluster) + '\t' + str(cell) + '\n')
+            else:
+                for cell in barcode_list_strain[cluster]:
+                    with open(os.path.join(PrepareDir, 'StrainCells.txt'), 'a') as output:
+                        output.write(str(cluster) + '\t' + str(cell) + '\n')
 
     @timeit
     def AllBinSplit(self):
