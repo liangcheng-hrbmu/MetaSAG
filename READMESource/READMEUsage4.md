@@ -3,73 +3,75 @@
 
 ## Func 1：FastaQC1(FastaDir,FastaOut)
 
-- **函数功能：**
-去除Fasta路径下所有fasta文件中过短的contig.
+- **Function Description:**
+Removes overly short contigs from all FASTA files in the specified directory.
 
-- **必选参数：**
+- **Required Parameters:**
 ```
-FastaDir        --      未校正fasta文件存放路径
-                        要求文件以.fasta结尾
+FastaDir        --      Path to the directory containing uncorrected FASTA files.
+                        Files must end with .fasta.
 
-FastaOut        --      校正后fasta文件的结果路径
+FastaOut        --      Path to save the directory of corrected FASTA files.
 
 ```````
-- **可选参数：**
+- **Optional Parameters:**
 ```
-minlen          --      fasta文件中contig长度的最小阈值，
-                        默认为500bp。
+minlen          --      Minimum contig length threshold in FASTA files.
+                        Default: 500 bp.
 
 ```
 
 
 ## Func 2：FastaQC2(FastaDir,FastaOut,CheckmFile)
 
-- **函数功能：**
-结合checkm结果，将校正后基因组fasta文件归类为合格/需要再校正/放弃。
+- **Function Description:**
+Classifies corrected genome FASTA files into "qualified," "needs re-correction," or "abandon" based on CheckM results.
 
-- **必选参数：**
+- **Required Parameters:**
 ```
-FastaDir        --      校正后fasta文件存放路径
+FastaDir        --      Path to the directory containing corrected FASTA files.
 
-FastaOut        --      fasta文件分类结果路径
+FastaOut        --      Path to save the classification results of FASTA files.
 
-CheckmFile      --      校正后fasta文件Checkm结果表格
+CheckmFile      --      CheckM result table for the corrected FASTA files.
 
 ```````
-- **可选参数：**
+- **Optional Parameters:**
 ```
-FastgDir        --      如果能够提供fastg文件夹，将相应fastg文件复制到Bandage文件夹中； 如果没有提供fastg文件夹，则只将相应fasta文件放到Bandage文件夹中
-                        默认为None。
+FastgDir        --      If a fastg folder is provided, copy corresponding fastg files to the Bandage folder; 
+                        if not, only place corresponding FASTA files in the Bandage folder.
+                        Default: None.
 
 ```
 
 
 ## Func 3：Summary(FastaSGB,CheckmFile,GTDBFile)
 
-- **函数功能：**
+- **Function Description:**
 
-将用户提供的组装基因组的MetaPhlAnN4分类文件(FastaSGB),Checkm质量检查文件(CheckmFile),GTDB-TK注释文件(GTDBFile)的结果整合到一起。
+Integrates results from MetaPhlAnN4 classification files (FastaSGB), CheckM quality inspection files (CheckmFile), and GTDB-TK annotation files (GTDBFile) for assembled genomes.
 
-- **必选参数：**
+- **Required Parameters:**
 ```
-FastaSGB        --      组装基因组经MetaPhlAnN4注释的分类文件路径
+FastaSGB        --      Path to the MetaPhlAnN4 annotation classification file for assembled genomes.
 
-CheckmFile      --      组装基因组的Checkm质量检查文件
+CheckmFile      --      CheckM quality inspection file for assembled genomes.
 
-GTDBFile        --      组装基因组的GTDB-TK注释文件
+GTDBFile        --      GTDB-TK annotation file for assembled genomes.
 
-```
-
-
-- **可选参数：**
-```
-outputSummary   --      注释结果整合结果文件路径
-                        默认为None,注释结果形式为DataFrame对象。
 ```
 
 
+- **Optional Parameters:**
+```
+outputSummary   --      Path to save the integrated annotation results file.
+                        Default: None (results are returned as a DataFrame object).
 
-Eg. FastaSGB(第一列为箱基因组文件名，要求去除后缀.fasta;第二列为MetaPhlan4分类SGB编号)
+```
+
+
+
+Eg. FastaSGB (first column: bin genome file name without .fasta suffix; second column: MetaPhlAn4 classification SGB ID)
 
 |   Bin   |   SGB    |
 |:-------:|:--------:|
@@ -79,7 +81,7 @@ Eg. FastaSGB(第一列为箱基因组文件名，要求去除后缀.fasta;第二
 |   ...   |   ...    |
 
 
-- **结果：**
+- **Result:**
 
 Eg. Summary.txt
 
@@ -94,12 +96,12 @@ Eg. Summary.txt
 
 
 ```
-#执行代码示例
+#Execution Command Examples
 
 from MetaSAG import BinQCAnno as bqa
 
 
-#去除长度<500bp的contig
+# Remove contigs <500bp in length
 
 FastaDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/BinQCAnno/input/QC1Fasta'
 
@@ -109,7 +111,7 @@ bqa.FastaQC1(FastaDir,FastaOut)
 
 
 
-#根据checkm文件判断基因组文件的组装质量。判断哪些组装基因组可以进一步校正
+# Evaluate genome assembly quality based on CheckM files and determine which assemblies need further correction
 
 FastaDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/BinQCAnno/input/QC2Fasta/fasta'
 
@@ -123,7 +125,7 @@ bqa.FastaQC2(FastaDir,FastaOut,CheckmFile,FastgDir=FastgDir)
 
 
 
-#整合MetaPhlAnN4注释分类,Checkm质量评估以及GTDBTK注释分类结果。
+# Integrate MetaPhlAnN4 annotation classification, CheckM quality assessment, and GTDBTK annotation classification results
 
 FastaSGB='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/BinQCAnno/input/summary/FastaSGB'
 

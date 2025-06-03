@@ -2,33 +2,33 @@
 ## Step 8. HUMAnN Path.
 
 ## Class：HP(FastqDir,ResultDir)
-- **类功能：**
+- **Class Function:**
 
-对所有测序读段根据分类，调用HUMann注释生物学通路。
+Classifies all sequencing reads and annotates biological pathways using HUMAnN.
 
-- **必选参数：**
+- **Required Parameters:**
 ```
 
-FastqDir        --      fastq文件存放路径
+FastqDir        --      Path to the fastq files directory.
 
-ResultDir       --      结果文件路径
+ResultDir       --      Path to save the results.
 
 ```
 
 ## Func 1：Diamond()
 
-- **函数功能：**
+- **Function Description:**
 
-对FastqDir下的fastq文件进行Diamond必读。
+Perform Diamond alignment on the FASTQ files under the FastqDir directory.
 
 
-- **可选参数：**
+- **Optional Parameters:**
 ```
-DiamondDB       --      Diamond参考数据库路径
-                        默认为None
+DiamondDB       --      Path to the Diamond reference database.
+                        Default: None
                         
-Diamondenv      --      Diamond运行依赖的conda环境
-                        默认为None
+Diamondenv      --      Conda environment required for running Diamond.
+                        Default: None
 
 ```
 
@@ -36,20 +36,20 @@ Diamondenv      --      Diamond运行依赖的conda环境
 
 ## Func 2：Uniref2Matrix()
 
-- **函数功能：**
+- **Function Description:**
 
-根据Diamond比对结果，得到每个细胞中相应Uniref片段的读段计数矩阵
+Generates a read count matrix of corresponding Uniref segments in each cell based on Diamond alignment results.
 
 
-- **可选参数：**
+- **Optional Parameters:**
 
 ```
 
-MinUnirefNum        --      要求细胞中含有注释Uniref读段的最小计数阈值
-                            默认为5
+MinUnirefNum        --      Minimum count threshold for annotated Uniref reads in a cell.
+                            Default: 5
     
-MinCellNum          --      要求Uniref映射读段出现的细胞最小计数阈值
-                            默认为5
+MinCellNum          --      Minimum count threshold for the number of cells where Uniref-mapped reads appear.
+                            Default: 5
 
 ```
 
@@ -57,9 +57,9 @@ MinCellNum          --      要求Uniref映射读段出现的细胞最小计数�
 
 ## Func 3：SeuratCluster()
 
-- **函数功能：**
+- **Function Description:**
 
-输入Uniref2Matrix函数得到的细胞-Uniref计数矩阵,调用Seurat对细胞进行聚类。得到与Unref计数相关的细胞聚类簇。
+Inputs the Cell-Uniref count matrix from Uniref2Matrix to cluster cells using Seurat, generating cell clusters related to Uniref counts.
 
 
 ![Seurat_Pheatmap](Seurat_Pheatmap.png)
@@ -69,25 +69,25 @@ MinCellNum          --      要求Uniref映射读段出现的细胞最小计数�
 
 ## Func 4：HUMAnNPath(CellAnno, Group)
 
-- **函数功能：**
+- **Function Description:**
 
-结合CellAnno及Group对细胞的分组信息，根据每组细胞的uniref注释结果，调用HuMANn对每组细胞进行生物学功能通路注释。
+Combines cell grouping information from CellAnno and Group to annotate biological pathways for each cell group using HUMAnN based on their Uniref annotations.
 
 
-- **必选参数：**
+- **Required Parameters:**
 
 ```
-CellAnno        --      细胞分组信息文件路径
+CellAnno        --      Path to the cell grouping information file.
 
-Group           --      选定CellAnno中的分组列名
+Group           --      Name of the grouping column in CellAnno.
 
 ```
 
 
 - **可选参数：**
 ```
-HUMAnNenv       --      humann运行依赖的conda环境
-                        默认为None
+HUMAnNenv       --      Conda environment required for running HUMAnN.
+                        Default: None
 
 ```
 
@@ -103,7 +103,7 @@ Eg. CellAnno (SeuratResult/KnownSGBCell_ClusterCell.txt)
 |   ...   |      ...      |
 
 
-- **结果：**
+- **Result:**
 
 ![HUMAnNPath](HUMAnNPath.png)
 
@@ -111,11 +111,11 @@ Eg. CellAnno (SeuratResult/KnownSGBCell_ClusterCell.txt)
 
 ```
 
-#执行代码示例
+# Execution Command Examples
 
 from MetaSAG import HUMAnNPath as hp
 
-#创建HP对象
+# Create an HP object
 
 fastqDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/HUMAnNPath/input/fastq' #292Mb
 
@@ -125,14 +125,14 @@ obj=hp.HP(fastqDir,resultDir)
 
 
 
-#对每个fastq文件Diamond比对
+# Perform Diamond alignment on each fastq file
 
 obj.Diamond(DiamondDB='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4/Func_Anno/Humann3/DB/uniref/uniref90_201901b_full.dmnd')
 
 # obj.DiamondDir 
 
 # '/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/HUMAnNPath/result/DiamondDir'
-# 如果用户自己进行Diamond比对，可以修改obj.DiamondDir的值来指定Diamond比对结果文件存放的目录，进行后面函数的分析。
+# If the user performs Diamond alignment independently, modify obj.DiamondDir to specify the directory containing Diamond alignment results for subsequent analysis.
 # obj.DiamondDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/HUMAnNPath/input/Diamond'
 obj.Uniref2Matrix()
 # Uniref2Matrix took 4.7900 seconds to execute.

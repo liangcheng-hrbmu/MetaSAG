@@ -1,33 +1,34 @@
 # Step 3. MetaPhlAn4 annotates the reads and classifies droplets
 
 ## Func：MPAnno(inputFastq, MPOut, SamName)
-- **函数功能：**
+- **Function Description:**
 
-调用MetaPhlAnN4,对输入的fastq文件进行注释。
+Executes MetaPhlAn4 to perform microbial community profiling from metagenomic FASTQ files.
 
-- **必选参数：**
+- **Required Parameters:**
 ```
-inputFastq      --      样本的短reads测序文件位置。
-                        如果是单端fastq文件，文件名必须以.fastq结尾；
-                        如果是双端fastq文件，文件名必须以_R1.fastq或_R2.fastq结尾，并以列表格式给出。
+inputFastq      --      Location of short-read sequencing file(s).
+                        For single-end FASTQ: Filename must end with .fastq.
+                        For paired-end FASTQ: Filenames must end with _R1.fastq and _R2.fastq, provided as a list (e.g., ["sample_R1.fastq", "sample_R2.fastq"]).
                         
-MPOut           --      MetaPhlAnN4注释结果存放路径。
+MPOut           --      Specifies the output directory path for MetaPhlAn4 taxonomic profiling results.
 
-SamName         --      结果文件名前缀。
+SamName         --      Output Filename Prefix.
 
 ```
-- **可选参数：**
+- **Optional Parameters:**
 ```
-env     --      MetaPhlAnN4软件所在conda环境。
-                默认为None。
+env     --      Specifies the Conda environment containing the MetaPhlAn4 installation.
+                Default Value:None
+
                 
-DB      --      MetaPhlAnN4软件参考数据库路径
-                默认为None。
+DB      --      MetaPhlAn4 Reference Database Path.
+                Default Value:None
 
 ```
 
 ```
-#执行代码示例
+#Execution Command Examples
 
 from MetaSAG import MetaPhlAnAsign as mpa
 
@@ -43,26 +44,26 @@ mpa.MPAnno(inputFastq,MPOut,SamName,env='metaphlan4.1',DB='/data_alluser/singleC
 
 ```
 ## Class：MPBowtie(inputBowtie,outputDir)
-- **类功能：**
+- **Class Function:**
 
-对MetaPhlAnN4对短读段的注释结果进行统计,判断液滴的分类情况。
+Performs quantitative analysis of MetaPhlAn4 taxonomic profiles to determine microbial taxonomic classification across droplets.
 
-- **必选参数：**
+- **Required Parameters:**
 ```
-inputBowtie     --  输入MetaPhlAnN4注释结果文件。
+inputBowtie     --  MetaPhlAn4 annotation results file.
 
-outputdir       --  所有结果文件的存放路径。
+outputdir       --  Specifies the directory path where all output files will be saved.
 ```
 
 ## Func 1：CellSGBStatistic()
 
-- **函数功能：**
+- **Function Description:**
 
-统计每个细胞中，各MetaPhlAnN4参考数据库中分类的比对count数。
+Quantifies reference database-aligned read counts for each taxonomic classification at single-cell resolution.
 
-- **结果：**
+- **Result:**
 
-Eg. Cell_SGB_Count.txt [SGB编号]
+Eg. Cell_SGB_Count.txt [SGB ID]
 
 |     Cell      |   SGB    | Count |
 |:-------------:|:--------:|:-----:|
@@ -77,7 +78,7 @@ Eg. Cell_SGB_Count.txt [SGB编号]
 |      ...      |   ...    |  ...  |
 
 
-Eg. Cell_Erro_Count.txt [非SGB编号]
+Eg. Cell_Erro_Count.txt [Non-SGB ID]
 
 |    Cell     |                   Erro                   | Count |
 |:-----------:|:----------------------------------------:|:-----:|
@@ -93,14 +94,13 @@ Eg. Cell_Erro_Count.txt [非SGB编号]
 
 ## Func 2：CellAsign(BC_Count)
 
-- **函数功能：**
+- **Function Description:**
 
-结合每个细胞的reads总数，根据阈值将细胞分类为**已知分类细胞，未知分类细胞，多胞液滴，未分类细胞**。
+Categorizes each cell into four classes **(Known-Taxon Cells,Unknown-Taxon Cells,Multi-cell Droplets,Unclassified Cells)** by integrating total read counts and taxonomic alignment results against predefined thresholds.
 
-- **必选参数：**
+- **Required Parameters:**
 ```
-BC_Count        --      记录每个细胞中含有的reads计数DataFrame类型对象。
-                        要求第一列为细胞ID,第二列为计数。
+BC_Count        --      Stores per-cell read count statistics in a standardized tabular format for quality control and downstream analysis.
 ```````
 Eg.
 
@@ -113,37 +113,37 @@ Eg.
 | Cell500004 | 1593  |
 |    ...     |  ...  |
 
-- **可选参数：**
+- **Optional Parameters:**
 ```
-Min_Reads           --      每个细胞含有reads总数的最小阈值。
-                            默认为None。
+Min_Reads           --      Minimum Total Reads per Cell Threshold.
+                            Default Value:None.
                             
-total_annoreads     --      每个细胞被注释到的reads总数的最小阈值。
-                            默认为200。
+total_annoreads     --      Minimum Annotated Reads per Cell Threshold.
+                            Default Value:200.
                             
-SGB_rate            --      要求每个细胞被注释分类的最大reads比例
-                            默认为0.8。     
+SGB_rate            --      Maximum SGB-Aligned Reads Ratio per Cell.
+                            Default Value:0.8. 
                             
-Double_SGB_rate     --      多胞液滴中每个分类占总注释reads的最小比例
-                            默认为0.2。      
+Double_SGB_rate     --      The minimum proportion of each SGB classification in the total annotated reads within multi-cell fluid droplets.
+                            Default Value:0.2.     
                             
-Double_All_rate     --      多胞液滴中，大于Double_SGB_rate的分类比例总和最小阈值。
-                            默认为0.8。
+Double_All_rate     --      The minimum threshold for the sum of proportions of SGB classifications greater than Double_SGB_rate in multi-cell fluid droplets.
+                            Default Value:0.8.
                             
-Double_Annoreads    --      多胞液滴被注释到reads总数的最小阈值。
+Double_Annoreads    --      The minimum threshold for the total number of annotated reads in multi-cell fluid droplets.
 
-Unknown_Allreads    --      未知分类细胞中总reads计数的最小阈值
-                            默认为500。
+Unknown_Allreads    --      The minimum threshold for the total read count in unclassified cells.
+                            Default Value:500.
                             
-Unknown_Annoreads   --      未知分类细胞中总注释reads技术的最大阈值。
-                            默认为10。
+Unknown_Annoreads   --      The maximum threshold for the total annotated read count in unclassified cells.
+                            Default Value:10.
                             
-SGB_topCell         --      已知分类中，每种分类箱中最可靠细胞个数的最大阈值
-                            默认为50。
+SGB_topCell         --      The maximum threshold for the number of most reliable cells in each known species taxonomic bin.
+                            Default Value:50.
 
 ```
 
-- **结果：**
+- **Result:**
 
 KnownSGB.txt
 
@@ -160,47 +160,43 @@ KnownCellAssem_top50.txt
 
 ## Func 3：CellAssem(CellBarn)
 
-- **函数功能：**
+- **Function Description:**
 
-根据CellAsign()函数得到的KnownCellAssem_top50.txt,从CellBarn路径下找到相应细胞文件,对每个箱进行组装。
+According to the KnownCellAssem_top50.txt obtained from the CellAsign() function, locate the corresponding cell files from the CellBarn path and assemble them for each bin.
 
-
-- **必选参数：**
+- **Required Parameters:**
 ```
-CellBarn    --      存放细胞短reads测序文件的路径
+CellBarn    --      The path where short read sequencing files of cells are stored
 
 ```
 
-- **可选参数：**
+- **Optional Parameters:**
 ```
-env         --      组装软件(spades.py)需要的conda环境。
-                    默认为None
+env         --      The name of the conda environment required for the assembly software (spades.py).
+                    Default Value:None.
 
-ReadsEnd    --      输入液滴测序文件是单端还是双端
-                    默认为单端，ReadsEnd='Single'
-                    如果是双端，修改ReadsEnd='Pair'.
+ReadsEnd    --      The type of droplet sequencing files input (single-end or paired-end).
+                    The default setting is for single-end reads, with ReadsEnd='Single'. For paired-end reads, modify it to ReadsEnd='Pair'.
 
 ```
 
 
 ## Func 4：HostPhage(Group='SGB',cumThresh=0.8 ,MinCellPhage=50)
 
-- **函数功能：**
+- **Function Description:**
+Performs group-wise quantification of reads that failed to align to Species-level Genome Bins (SGB) based on cellular annotations from CellAsign(). Generates metrics for unclassified/contaminant sequences at single-cell resolution.
+The Cell_Anno data frame of the MPBowtie object can be modified by the user as needed.
 
-根据CellAsign()函数得到的Cell_Anno信息,对细胞进行分组统计每组细胞中非SGB读段的计数或比例。
-
-！注意MPBowtie对象的Cell_Anno数据框可以根据用户需要自行更改。
-
-- **可选参数：**
+- **Optional Parameters:**
 ```
-Group           --      MPBowtie对象CellAnno信息中对细胞的分组列名称，
-                        默认为'SGB'。
+Group           --      The name of the grouping column for cells in the CellAnno information within the MPBowtie object.
+                        Default Value:'SGB'.
 
-cumThresh       --      样本中统计最主流噬菌体的累积分布阈值，
-                        默认为0.8。
+cumThresh       --      The cumulative distribution threshold for the most abundant phages in the sample.
+                        Default Value:0.8.
 
-MinCellPhage    --      认为细胞中显著含有噬菌体的噬菌体reads计数最小阈值，
-                        默认为50。
+MinCellPhage    --      The minimum threshold for phage read counts in cells.
+                        Default Value:50。
                         
 ```
 
@@ -219,7 +215,7 @@ Eg. Cell_Anno
 |      ...      |      ...      |   ...    |
 
 
-- **结果：**
+- **Result**
 
 Eg. MainPhage_Cluster_Count.txt
 
@@ -243,45 +239,44 @@ Eg. MainPhage_Cluster_Count.txt
 
 ## Func 5：DoubleCellKraken(CellBarn)
 
-- **函数功能：**
-根据CellAsign()函数得到的DoubleCell信息,对每个多胞液滴进行Kraken2重注释并绘制单个液滴的物种分类桑基图进行展示。
+- **Function Description:**
+According to the DoubleCell information obtained from the CellAsign () function, perform Kraken2 re-annotation on each multi-cell droplet and plot a Sankey diagram of species classification for individual droplets for visualization.
 
-
-- **必选参数：**
+- **Required Parameters:**
 ```
-CellBarn    --      存放细胞短reads测序文件的路径
+CellBarn    --      The path to the short-read sequencing files of the cells.
 
 ```
 
 
 
-- **可选参数：**
+- **Optional Parameters:**
 ```
-env         --      Kraken2运行的conda环境。
-                    默认为None。
+env         --      The conda environment for running Kraken2.
+                    Default: None.
                     
-KrakenDB    --      Kraken2参考数据库路径。
-                    默认为None。
+KrakenDB    --      The path to the Kraken2 reference database.
+                    Default: None.
                     
-ReadsEnd    --      输入液滴测序文件是单端还是双端
-                    默认为单端，ReadsEnd='Single'
-                    如果是双端，修改ReadsEnd='Pair'.
+ReadsEnd    --      Specifies whether the input droplet sequencing files are single-end or paired-end.
+                    Default is single-end, ReadsEnd='Single'.
+                    For paired-end, modify to ReadsEnd='Pair'.
                         
 ```
 
 
-- **结果：**
+- **Result:**
 
 ![DoubleCell](DoubleCell.png)
 
 
 
 ```
-#执行代码示例
+#Execution Command Examples
 
 from MetaSAG import MetaPhlAnAsign as mpa
 
-#MetaPhlAnN4注释
+#MetaPhlAnN4 annotation
 
 inputFastq = './testData/MetaPhlanAsign/input/test.fastq'
 
@@ -294,7 +289,7 @@ mpa.MPAnno(inputFastq,output,Sam,env='metaphlan4.1',DB='/data_alluser/singleCell
 
 
 
-#构建MPBowtie对象
+#Build MPBowtie object
 
 input_bowtie='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/MetaPhlAnAsign/input/S10_bowtie2' #497Mb
 
@@ -305,13 +300,13 @@ obj=mpa.MPBowtie(input_bowtie,result_dir)
 
 
 
-#统计细胞注释情况
+#Statistical cell annotation
 
 obj.CellSGBStatistic() 
 
 CellSGBStatistic took 60.7226 seconds to execute.
 
-#查看结果
+#results
 
 obj.Cell_SGB_Count
 
@@ -321,7 +316,7 @@ obj.Cell_Erro_Count
 
 
 
-#分类细胞(KnownSGB/UnknownCell/DoubleCell/UnAsignedCell)
+#Classify cells (KnownSGB/UnknownCell/DoubleCell/UnAsignedCell)
 
 import pandas as pd
 
@@ -330,7 +325,7 @@ BC_Count=pd.read_csv('./testData/MetaPhlAnAsign/input/S10_bcread.txt',sep='\t',h
 obj.CellAsign(BC_Count) 
 #CellAsign took 175.5504 seconds to execute.
 
-#查看结果
+#results
 
 obj.KnownCell
 
@@ -348,14 +343,14 @@ obj.Cell_Anno
 
 
 
-#统计噬菌体reads的分布
+#Statistical distribution of phage reads
 
 obj.HostPhage()
 #HostPhage took 0.5502 seconds to execute.
 
 
 
-#查看多胞液滴物种的分布。
+#View the species distribution of multi-cell droplets.
 
 #CellBarn='/data_alluser/singleCellMicrobiome/rawdata_bdwp/202405_standard/all/'
 
@@ -365,8 +360,8 @@ obj.DoubleCellKraken(CellBarn,env='kraken',KrakenDB='/data_alluser/public/databa
 # DoubleCellKraken took 3466.3195 seconds to execute.
 
 
-#根据obj.KnownCellAssem提供的细胞，进行组装
-# 1185个Cell
+#Assemble cells provided by obj.KnownCellAssem
+# 1185 Cells
 
 #obj.KnownCellAssem=pd.read_csv('/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/MetaPhlanAsign/result/KnownCellAssemShort.txt',sep='\t',header=0)
 

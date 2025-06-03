@@ -1,28 +1,26 @@
 # Step 2. Filter low-quality cells.
 
 ## Class：BCFilter(inputfastq,outputdir)
-- **类功能：**
+- **Class Description:**
 
-根据一个样本中，每个液滴reads条数的累积分布，去除含有过少reads的液滴。
+Droplet Filtration Based on Read Count Distribution in Sample.
 
-- **必选参数：**
+- **Required Parameters:**
 ```
-inputFastq  --  样本的短reads测序文件位置
-                如果是单端fastq文件，文件名必须以.fastq结尾；
-                如果是双端fastq文件，文件名必须以_R1.fastq或_R2.fastq结尾，并以列表格式给出。
+inputFastq  --  Location of short-read sequencing file(s).
+                For single-end FASTQ: Filename must end with .fastq.
+                For paired-end FASTQ: Filenames must end with _R1.fastq and _R2.fastq, provided as a list (e.g., ["sample_R1.fastq", "sample_R2.fastq"]).
 
-outputdir   --  所有结果文件的存放路径
+outputdir   --  Specifies the file path where result files will be stored.
 ```````
-
 
 
 ## Func 1：CellCountStatistic()
 
-- **函数功能：**
-统计该inputfastq中每个细胞的reads数。
+- **Function Description:**
+Calculates and reports the number of sequencing reads assigned to each cell barcode in the input FASTQ file(s).
 
-
-- **结果：**
+- **Result:**
 
 Eg. bcread.txt
 
@@ -40,30 +38,30 @@ Eg. bcread.txt
 
 ## Func 2：getMinReads()
 
-- **函数功能：**
-根据一个样本中细胞reads数目的分布，找出这个样本中去除少reads细胞的min_reads阈值。
+- **Function Description:**
+Automatically calculates the optimal minimum read count threshold for filtering out low-quality cells based on the read count distribution across all cells in a sample.
 
-- **可选参数：**
+- **Optional Parameters:**
 ```
-FirstDrv_xlim       --      一阶导绘图横坐标范围
-                            默认为[-1000,5000]
+FirstDrv_xlim       --      Specifies the horizontal axis range for first derivative plots.
+                            Default Value:[-1000,5000]
                             
-SecondDrv_xlim      --      二阶导绘图横坐标范围
-                            默认为[-1000,5000]
+SecondDrv_xlim      --      Specifies the horizontal axis range for second derivative plots.
+                            Default Value:[-1000,5000]
                             
 ```
 
 
 ## Func 3：BCMinReads()
 
-- **函数功能：**
-根据min_reads，过滤细胞(及其inputFastq),得到BC_Count_Filter.txt。
+- **Function Description:**
+Filters cellular barcodes (droplets) based on a minimum read count threshold, generating a validated barcode output file.
 
 
 
 
 ```
-#执行代码
+#Execution Command Examples
 
 from MetaSAG import BCFilter as bcf
 
@@ -73,16 +71,16 @@ obj=bcf.BCFilter('./testData/BCFilter/input/S10_Tag.fastq','./testData/BCFilter/
 obj.CellCountStatistic()
 #CellCountStatistic took 21.4586 seconds to execute.
 
-# obj.BC_Count  展示每个细胞中有多少条reads的数据框（可修改）
+# obj.BC_Count:Stores per-cell read count statistics in a modifiable tabular format for quality control and downstream analysis.
 
 obj.getMinReads()
 #getMinReads took 3.0193 seconds to execute.
 
-# obj.min_reads 展示该样本应选取的最低reads阈值（可修改）
+# obj.min_reads:Minimum Droplet Read Count Threshold (Configurable)
 
 obj.BCMinReads()
 
-#obj.BC_Count_Filter    展示根据obj.min_reads过滤后剩余的细胞列表
+#obj.BC_Count_Filter:Generates a curated list of cellular barcodes that meet or exceed the specified minimum read count threshold (obj.min_reads)
 
 
 ```
@@ -98,23 +96,26 @@ obj.BCMinReads()
 
 ## Func 4：SamsBCFilterStack(Sam,SavedCell,AllCell,outputDir)
 
-- **函数功能：**
-多个样本过滤细胞前后细胞数量的统计，绘制堆叠柱状图。
+- **Function Description:**
 
-- **必选参数：**
+- Performs comparative analysis of cellular yields across multiple samples before and after quality filtering, with automated generation of publication-ready stacked barplots.
+
+
+
+- **Required Parameters:**
 ```
-Sam       --  样本名列表
+Sam       --  Sample Name List
 
-AllCell   --  每个样本中所有细胞个数列表
+AllCell   --  Per-Sample Cell Count Statistics
 
-SaveCell  --  过滤细胞后，每个样本中保留的细胞个数列表
+SaveCell  --  List of Retained Cell Counts per Sample After Cell Filtering
 
-outputDir --  结果文件存放路径
-
-```
+outputDir --  Specifies the directory path where all output files will be saved.
 
 ```
-#执行代码示例
+
+```
+#Execution Command Examples
 
 AllCell = [3132, 4557, 2321, 3433, 4500]
 

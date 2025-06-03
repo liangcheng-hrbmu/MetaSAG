@@ -2,38 +2,47 @@
 
 ## Func 1：SAGSplit(inputFastq,CellBarn)
 
-- **函数功能：**
+- **Function Description:**
 
-SAGSplit()输入的样本测序文件（fastq格式），根据barcode序列信息，将每条reads分别写入到相应的液滴文件中。
+The SAGSplit() function processes input sequencing files (in FASTQ format) and distributes each read into the corresponding droplet file based on its barcode sequence. 
 
-reads的barcode识别由内置的FindBarcode函数（或用户自己提供）完成。
+Barcode identification is performed by the built-in FindBarcode() function or a user-provided alternative.
 
 
-- **必选参数：**
+- **Required Parameters:**
 ```
-inputFastq  --  样本的短reads测序文件位置
-                如果是单端fastq文件，文件名必须以.fastq结尾；
-                如果是双端fastq文件，文件名必须以_R1.fastq或_R2.fastq结尾，并以列表格式给出。
+inputFastq      Location of short-read sequencing file(s).
+                For single-end FASTQ: Filename must end with .fastq.
+                For paired-end FASTQ: Filenames must end with _R1.fastq and _R2.fastq, provided as a list (e.g., ["sample_R1.fastq", "sample_R2.fastq"]).
 
-CellBarn    --  分割样本后存储液滴文件的结果路径
-```
-
-- **可选参数：**
-```
-FindBarcode     --  要求输入的是一个用户自己写的函数，该函数只输入一个reads字符串，要求返回一个字符串，该字符串在正常匹配时返回reads所属的Barcode字符串，或者未匹配的原因字符串eg,"Erro","Len","W1","BC"总之能返回一个字符串。
-                    默认为脚本中定义的函数FindBarcode()
-
-warning         --  FindBarcode函数中设定某些reads无法正常匹配Barcode时自编函数返回字符串的情况
-                    默认为['Len','W1','BC']
-
-filterWarning   --  如果reads对应的Barcode字符串在warning中，这样的reads不写入到单液滴文件中
-                    默认为True
+CellBarn        Output directory for droplet-split files. Stores partitioned results after processing.
 ```
 
-
-- **对于单端数据**
+- **Optional Parameters:**
 ```
-#输入文件示例
+FindBarcode     Custom barcode identification function. Accepts a single read string as input.
+                Returns either:
+                • Matched barcode string (e.g., "ATCGGTCA")
+                • Error code string for mismatches (e.g., "Err", "Len", "W1", "BC")
+
+warning	list	Designated error codes from FindBarcode indicating:
+                • Len: Barcode length mismatch
+                • W1: Weak signal/quality
+                • BC: Barcode contamination
+
+filterWarning   Filter control:
+                • When True, reads returning warning codes are excluded from droplet files
+                • When False, all reads are processed regardless of warnings
+
+                    
+                    
+
+```
+
+
+- **Single-End Data Processing**
+```
+#Input File Examples
 test.fastq:
 
 @NB501288_516_HC2NTBGXB:1:11101:18376:1042#CGAGGCTG/1
@@ -49,11 +58,11 @@ AAAAAE#EEEEEEEEEEEEEEEEEEEEEEEAEEEEEEEEEEEEEEEEEEEEEEEEEEE6/EEEEEEAEEAAEEE/EEEEE
 
 
 ```
-#执行代码
+#Execution Command Examples
 
 from MetaSAG import BarcodeDeal as bcd
 
-#inputFastq 文件大小为11Mb
+#inputFastq File size: 11MB
 inputFastq = 'zszshhh/testData/BarcodeDeal/input/test.fastq'
 
 CellBarn = './testData/BarcodeDeal/result/CellBarn_single'
@@ -64,7 +73,7 @@ bcd.SAGSplit(inputFastq,CellBarn)
 ```
 
 ```
-#结果
+#Result
 
 {'W1': 774, 'Len': 0, 'BC': 1533}
 SAGSplit took 1.8001 seconds to execute.
@@ -77,10 +86,10 @@ SAGSplit took 1.8001 seconds to execute.
 
 
 ```
-#结果文件示例
+#Output File Examples
 
 #318.fastq
-#该文件中每条reads的标头以@Barcode_ID:开头
+#Each read header in the file starts with @Barcode_ID:
 
 @318:NB501288_516_HC2NTBGXB:1:11101:8220:5572#CGAGGCTG/1
 GTTTGTTTGAGTGATTGCTTGTGACGCCTTCCTGACACTCGTCGGCAGCGTCAGATGTCTATAAGAGACAGCTTGTATACAATATGCTTATAGTATACTCATATTTTCCTTAAAAATCAATATTTTATCTCACGATTTTAAATCTGAATTTTCCATTT
@@ -93,14 +102,14 @@ AAAA/E/EEAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE6EEEEEEEEEAEA<EEE//EEA
 
 ```
 
-- **对于双端数据**
+- **Paired-End Data Processing**
 
 ```
-#执行代码
+#Execution Command Examples
 
 from MetaSAG import BarcodeDeal as bcd
 
-#test_R1.fastq 与 test_R2.fastq 各11Mb
+#test_R1.fastq and test_R2.fastq
 inputFastq = ['zszshhh/testData/BarcodeDeal/input/test_R1.fastq','zszshhh/testData/BarcodeDeal/input/test_R2.fastq']
 
 CellBarn = './testData/BarcodeDeal/result/CellBarn_pair'
@@ -111,7 +120,7 @@ bcd.SAGSplit(inputFastq,CellBarn)
 ```
 
 ```
-#结果
+#Result
 
 {'W1': 774, 'Len': 0, 'BC': 1533}
 SAGSplit took 2.3399 seconds to execute.
@@ -123,43 +132,42 @@ SAGSplit took 2.3399 seconds to execute.
 
 
 ## Func 2：trim(inputFastqDir,trimDir)
-- **函数功能：**
-调用jar包 **trimmomatic.jar**,对inputFastqDir目录下每个细胞中的reads进行去接头的修剪步骤。
+- **Function Description:**
+Execute the **trimmomatic.jar**,The trimmomatic.jar tool is invoked to perform adapter trimming on sequencing reads for each cell in the inputFastqDir directory.
 
-- **必选参数：**
+- **Required Parameters:**
 ```
-inputFastqDir   --  每个液滴测序文件存放的路径
-                    如果是单端fastq文件，文件名必须以.fastq结尾；
-                    如果是双端fastq文件，文件名必须以_R1.fastq或_R2.fastq结尾。
+inputFastqDir      Directory path containing droplet sequencing files
+                   • Single-end FASTQ: Filename suffix must be .fastq (e.g., sample.fastq)
+                   • Paired-end FASTQ: Filename suffixes must be _R1.fastq and _R2.fastq (e.g., sample_R1.fastq, sample_R2.fastq)
 
-trimDir         --  接头去除后的结果文件存放位置
+trimDir            Output directory for processed files after adapter trimming
 
-```
-
-- **可选参数：**
-```
-ReadsEnd        --  输入液滴测序文件是单端还是双端
-                    默认为单端，ReadsEnd='Single'；
-                    如果是双端，修改ReadsEnd='Pair'.
-
-
-ILLUMINACLIP    --  jar包参数,默认为'TruSeq3-PE.fa:2:30:10:3:TRUE'   
-
-LEADING         --  jar包参数,默认为25
-
-TRAILING        --  jar包参数,默认为3
-
-SLIDINGWINDOW   --  jar包参数,默认为'4:20'
-
-MINLEN          --  jar包参数,默认为30
-
-threads         --  jar包参数,默认为12
 ```
 
-
-对于单端数据
+- **Optional Parameters:**
 ```
-#执行代码示例
+ReadsEnd        Specifies whether input droplet sequencing files are single-end or paired-end
+                Default: Single-end (ReadsEnd='Single')，
+
+
+ILLUMINACLIP    --  Default parameter (JAR config): 'TruSeq3-PE.fa:2:30:10:3:TRUE'   
+
+LEADING         --  Default parameter (JAR config): 25
+
+TRAILING        --  Default parameter (JAR config): 3
+
+SLIDINGWINDOW   --  Default parameter (JAR config): '4:20'
+
+MINLEN          --  Default parameter (JAR config): 30
+
+threads         --  Default parameter (JAR config): 12
+```
+
+
+Single-End Data Processing
+```
+#Execution Command Examples
 
 from MetaSAG import BarcodeDeal as bcd
 
@@ -173,16 +181,16 @@ bcd.trim(inputCellBarn,trimBarn)
 
 
 ```
-#结果
+#Result
 
 trim took 420.1405 seconds to execute.
 
 ```
 
 
-对于双端数据
+Paired-End Data Processing
 ```
-#执行代码示例
+#Execution Command Examples
 
 from MetaSAG import BarcodeDeal as bcd
 
@@ -196,7 +204,7 @@ bcd.trim(inputCellBarn,trimBarn,ReadsEnd='Pair')
 
 
 ```
-#结果
+#Result
 
 trim took 663.4608 seconds to execute.
 

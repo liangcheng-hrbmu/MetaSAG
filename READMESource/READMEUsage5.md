@@ -4,30 +4,29 @@
 
 ## Func 1：BuildTree(FastaDir,TreeTemp,env=None)
 
-- **函数功能：**
+- **Function Description:**
 
-调用ANVI'O,对输入目录下的基因组文件构建进化树.
+Calls ANVI'O to build a phylogenetic tree for genome files in the input directory.
 
 
-- **必选参数：**
+- **Required Parameters:**
 ```
-FastaDir        --      输入基因组文件路径
-                        注意必须是绝对路径。
+FastaDir        --      Path to input genome files (must be an absolute path).
 
-TreeTemp        --      树文件结果路径
-
+TreeTemp        --      Path to save the tree file results.
 
 
-```
 
-
-- **可选参数：**
-```
-env         --      ANVI'O运行的conda环境。
-                    默认为None。
 ```
 
-- **结果：**
+
+- **Optional Parameters:**
+```
+env         --      Conda environment for running ANVI'O.
+                    Default: None.
+```
+
+- **Result:**
 
 phylogenomic-tree_Bacteria_71_ribosomal6.txt
 
@@ -36,22 +35,22 @@ phylogenomic-tree_Bacteria_71_ribosomal6.txt
 
 ## Func 2：itolPlot(BinAnno,Anno)
 
-- **函数功能：**
+- **Function Description:**
 
-将提供的基因组信息整理为适合itol网页绘制进化树的数据格式。
+Organizes provided genome information into a data format suitable for plotting phylogenetic trees on the itol web interface.
 
 
-- **必选参数：**
+- **Required Parameters:**
 ```
 
-BinAnno     --      基因组文件信息
+BinAnno     --      Information about genome files.
 
-Anno        --      itol绘图格式结果文件存放路径
+Anno        --      Path to save the itol plotting format results file.
 
 
 ```
 
-Eg. BinAnno (不提供门水平对应颜色)
+Eg. BinAnno (without phylum-level color mapping)
 
 |   Bin   | CellNum |     Phylum     |
 |:-------:|:-------:|:--------------:|
@@ -62,7 +61,7 @@ Eg. BinAnno (不提供门水平对应颜色)
 
 
 
-Eg. BinAnno (提供门水平对应颜色)
+Eg. BinAnno (with phylum-level color mapping)
 
 |   Bin   | CellNum |     Phylum     |  Color  |
 |:-------:|:-------:|:--------------:|:-------:|
@@ -71,18 +70,18 @@ Eg. BinAnno (提供门水平对应颜色)
 | genome3 |   18    | Actinobacteria | #fea443 |
 |   ...   |   ...   |      ...       |   ...   |
 
-- **结果：**
+- **Result:**
 
 ![Tree](Tree.png)
 
 
 
 ```
-#执行代码示例
+# Execution Command Examples
 
 from MetaSAG import Tree as tree
 
-#构建树
+# Build phylogenetic tree
 
 FastaDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/Tree/input' #292Mb
 
@@ -93,7 +92,7 @@ tree.BuildTree(FastaDir,TreeTemp,env='anvio-7.1')
 
 
 
-#整理itol网页树绘图文件
+# Prepare itol web tree plotting file
 
 BinAnno='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/Tree/input/BinAnno'
 

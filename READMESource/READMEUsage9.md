@@ -2,30 +2,30 @@
 ## Step 9. Droplet clustering of potentially unknown species
 
 ## Func 1：ClusterSAG(inputFastq,outputDir)
-- **函数功能：**
+- **Function Description:**
 
-对筛选出的潜在未知物种进行聚类（第一次聚类）。
+Performs clustering (first round) on selected potentially unknown species.
 
-- **必选参数：**
+- **Required Parameters:**
 ```
 
-inputFastq      --      潜在未知物种液滴fastq文件存放路径
+inputFastq      --      Path to the fastq files directory of potentially unknown species droplets.
 
-outputDir       --      聚类结果文件存放路径
+outputDir       --      Path to save the clustering results.
 
 ```
 
-- **可选参数：**
+- **Optional Parameters:**
 ```
-ReadsEnd        --      输入液滴测序文件是单端还是双端
-                        默认为单端，ReadsEnd='Single'
-                        如果是双端，修改ReadsEnd='Pair'.
+ReadsEnd        --      Type of droplet sequencing files (single-end or paired-end).
+                        Default: single-end, ReadsEnd='Single'.
+                        For paired-end, set ReadsEnd='Pair'.
                         
-SpadesEnv       --      Spades.py运行依赖的conda环境
-                        默认为None
+SpadesEnv       --      Conda environment required for running Spades.py.
+                        Default: None
                         
-SourmashEnv     --      Sourmash运行依赖的conda环境
-                        默认为None                   
+SourmashEnv     --      Conda environment required for running Sourmash.
+                        Default: None                   
 
 ```
 
@@ -33,31 +33,31 @@ SourmashEnv     --      Sourmash运行依赖的conda环境
 
 ## Func 2：ClusterBin(OldRoundFold,NewRoundFold)
 
-- **函数功能：**
+- **Function Description:**
 
-根据用户需要，在之前聚类的结果上进行再一次聚类。
+Performs an additional round of clustering based on previous clustering results as needed.
 
 
-- **必选参数：**
+- **Required Parameters:**
 ```
 
-OldRoundFold    --      上一次聚类结果存放的根路径（函数输入数据）
+OldRoundFold    --      Root path of the previous clustering results (input data for the function).
 
-outputDir       --      再次聚类的结果文件存放路径
+outputDir       --      Path to save the results of the additional clustering.
 
 ```
 
-- **可选参数：**
+- **Optional Parameters:**
 ```
-ReadsEnd        --      输入液滴测序文件是单端还是双端
-                        默认为单端，ReadsEnd='Single'
-                        如果是双端，修改ReadsEnd='Pair'.
+ReadsEnd        --      Type of droplet sequencing files (single-end or paired-end).
+                        Default: single-end, ReadsEnd='Single'.
+                        For paired-end, set ReadsEnd='Pair'.
                         
-SpadesEnv       --      Spades.py运行依赖的conda环境
-                        默认为None
+SpadesEnv       --      Conda environment required for running Spades.py.
+                        Default: None
                         
-SourmashEnv     --      Sourmash运行依赖的conda环境
-                        默认为None                   
+SourmashEnv     --      Conda environment required for running Sourmash.
+                        Default: None                   
 
 ```
 
@@ -65,7 +65,7 @@ SourmashEnv     --      Sourmash运行依赖的conda环境
 
 ```
 
-#执行代码示例
+# Execution Command Examples
 
 from MetaSAG import UnknownSAG as usag
 
@@ -73,12 +73,12 @@ fastqDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyP
 
 resultDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/MetaPhlAnAsign/result/UnknownCell/testResult'
 
-usag.ClusterSAG(fastqDir,resultDir,SourmashEnv='sourmash') #对未知物种液滴进行初次聚类
+usag.ClusterSAG(fastqDir,resultDir,SourmashEnv='sourmash') # Initial clustering of unknown species droplets
 
 Round1Dir=os.path.join(resultDir,'Round1')
 
 Round2Dir=os.path.join(resultDir,'Round2')
 
-usag.ClusterBin(Round1Dir,Round2Dir) #根据初次聚类结果对未知物种液滴的箱再次聚类
+usag.ClusterBin(Round1Dir,Round2Dir) # Re-clustering of unknown species droplet bins based on initial results
 
 ```
