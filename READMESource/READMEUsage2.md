@@ -65,8 +65,12 @@ Filters cellular barcodes (droplets) based on a minimum read count threshold, ge
 
 from MetaSAG import BCFilter as bcf
 
-#S10_Tag.fastq 6.1G
-obj=bcf.BCFilter('./testData/BCFilter/input/S10_Tag.fastq','./testData/BCFilter/result/')
+#Samplename.fastq 6.1G
+inputFastq = Target_Path + “Barn/Summary/Samplename.fastq” # Consolidated file of all trimmed cell sequences belonging to the same sample
+
+resultDir = Target_Path + “Cell_Filter/”
+
+obj=bcf.BCFilter( inputFastq ,resultDir )
 
 obj.CellCountStatistic()
 #CellCountStatistic took 21.4586 seconds to execute.
@@ -123,11 +127,11 @@ SavedCell = [2000,3000,1734,2222,2000]
 
 Sam=['S5','S6','S7','S8','S10']
 
-outputDir=’./testData/BCFilter/result/’
+outputDir = Target_Path + “Cell_Filter/Stack/”
 
 from MetaSAG import BCFilter as bcf
 
-bcf.SamBCFilterStack(Sam,SavedCell,AllCell,'./testData/BCFilter/result/')
+bcf.SamBCFilterStack(Sam,SavedCell,AllCell,outputDir)
 
 #SamsBCFilterStack took 0.1096 seconds to execute.
 

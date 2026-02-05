@@ -117,9 +117,9 @@ from MetaSAG import HUMAnNPath as hp
 
 # Create an HP object
 
-fastqDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/HUMAnNPath/input/fastq' #292Mb
+fastqDir = Target_Path + 'HUMAnNPath/fastq/'  #292Mb
 
-resultDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/HUMAnNPath/result'
+resultDir = Target_Path + 'HUMAnNPath/result/' 
 
 obj=hp.HP(fastqDir,resultDir)
 
@@ -127,19 +127,19 @@ obj=hp.HP(fastqDir,resultDir)
 
 # Perform Diamond alignment on each fastq file
 
-obj.Diamond(DiamondDB='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4/Func_Anno/Humann3/DB/uniref/uniref90_201901b_full.dmnd')
+obj.Diamond(DiamondDB = '/Database/uniref/uniref90_201901b_full.dmnd')
 
 # obj.DiamondDir 
 
-# '/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/HUMAnNPath/result/DiamondDir'
+# 'Target_Path + 'HUMAnNPath/result/DiamondDir'
 # If the user performs Diamond alignment independently, modify obj.DiamondDir to specify the directory containing Diamond alignment results for subsequent analysis.
-# obj.DiamondDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/HUMAnNPath/input/Diamond'
+# obj.DiamondDir = Target_Path + 'HUMAnNPath/result/Diamond'
 obj.Uniref2Matrix()
 # Uniref2Matrix took 4.7900 seconds to execute.
 obj.SeuratCluster()
 # SeuratCluster took 16.6086 seconds to execute.
 
-cellAnno='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData/testData/HUMAnNPath/result/SeuratResult/KnownSGBCell_ClusterCell.txt'
+cellAnno = Target_Path + 'HUMAnNPath/result/SeuratResult/KnownSGBCell_ClusterCell.txt'
 obj.HUMAnNPath(cellAnno,'Cluster',HUMAnNenv='humann')
 # HUMAnNPath took 581.9383 seconds to execute.
 

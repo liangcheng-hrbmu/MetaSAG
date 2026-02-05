@@ -103,9 +103,9 @@ from MetaSAG import BinQCAnno as bqa
 
 # Remove contigs <500bp in length
 
-FastaDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/BinQCAnno/input/QC1Fasta'
+FastaDir = Target_Path + 'MetaPhlAnAsign/MPAsign/BinFasta/'
 
-FastaOut='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/BinQCAnno/result/QC1Fasta'
+FastaOut = Target_Path + "Bin_QC/BinFastaQC1/"
 
 bqa.FastaQC1(FastaDir,FastaOut)
 
@@ -113,13 +113,13 @@ bqa.FastaQC1(FastaDir,FastaOut)
 
 # Evaluate genome assembly quality based on CheckM files and determine which assemblies need further correction
 
-FastaDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/BinQCAnno/input/QC2Fasta/fasta'
+FastaDir = Target_Path + 'Bin_QC/BinFastaQC1/'
 
-FastgDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/BinQCAnno/input/QC2Fasta/fastg'
+FastgDir = Target_Path + 'MetaPhlAnAsign/MPAsign/BinFastg/'
 
-CheckmFile='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/BinQCAnno/input/QC2Fasta/qa_result'
+CheckmFile = Target_Path + 'Bin_QC/BinFastaQC1/check/qa_results'
 
-FastaOut='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/BinQCAnno/result/QC2Fasta'
+FastaOut = Target_Path + 'Bin_QC/BinFastaQC2/'
 
 bqa.FastaQC2(FastaDir,FastaOut,CheckmFile,FastgDir=FastgDir) 
 
@@ -127,13 +127,13 @@ bqa.FastaQC2(FastaDir,FastaOut,CheckmFile,FastgDir=FastgDir)
 
 # Integrate MetaPhlAnN4 annotation classification, CheckM quality assessment, and GTDBTK annotation classification results
 
-FastaSGB='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/BinQCAnno/input/summary/FastaSGB'
+FastaSGB = Target_Path + 'Bin_QC/BinFastaQC2/Pass/FastaSGB.txt'
 
-CheckmFile='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/BinQCAnno/input/summary/qa_result'
+CheckmFile = Target_Path + 'Bin_QC/BinFastaQC1/check/qa_results'
 
-GTDBFile='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/BinQCAnno/input/summary/gtdbtk.bac120.summary.tsv'
+GTDBFile = Target_Path + 'Bin_QC/BinFastaQC2/Pass/gtdb_out/gtdbtk.bac120.summary.tsv'
 
-outputSummary='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/BinQCAnno/input/summary/summary.txt'
+outputSummary = Target_Path + 'Bin_QC/summary.txt'
 
 summary=bqa.Summary(FastaSGB,CheckmFile,GTDBFile)
 

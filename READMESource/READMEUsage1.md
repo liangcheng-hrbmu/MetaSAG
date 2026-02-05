@@ -63,9 +63,10 @@ AAAAAE#EEEEEEEEEEEEEEEEEEEEEEEAEEEEEEEEEEEEEEEEEEEEEEEEEEE6/EEEEEEAEEAAEEE/EEEEE
 from MetaSAG import BarcodeDeal as bcd
 
 #inputFastq File size: 11MB
-inputFastq = 'zszshhh/testData/BarcodeDeal/input/test.fastq'
+inputFastq = "/DATA/test.fastq" # Single-end fastq file for analysis 
 
-CellBarn = './testData/BarcodeDeal/result/CellBarn_single'
+#Target_Path: A user-defined directory for storing output results. The path must terminate with a trailing forward slash (e.g., /path/to/output/).
+CellBarn = Target_Path + "Barn/CellBarn_single/" # Destination subdirectory for processed results (Ensure trailing "/" is present).
 
 bcd.SAGSplit(inputFastq,CellBarn)
 
@@ -110,9 +111,9 @@ AAAA/E/EEAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE6EEEEEEEEEAEA<EEE//EEA
 from MetaSAG import BarcodeDeal as bcd
 
 #test_R1.fastq and test_R2.fastq
-inputFastq = ['zszshhh/testData/BarcodeDeal/input/test_R1.fastq','zszshhh/testData/BarcodeDeal/input/test_R2.fastq']
+inputFastq = ["/DATA/test_R1.fastq", "/DATA/test_R2.fastq"] # Paired-end fastq files for analysis
 
-CellBarn = './testData/BarcodeDeal/result/CellBarn_pair'
+CellBarn = Target_Path + "Barn/CellBarn_pair/" # Destination subdirectory for processed results (Ensure trailing "/" is present).
 
 bcd.SAGSplit(inputFastq,CellBarn)
 
@@ -171,9 +172,9 @@ Single-End Data Processing
 
 from MetaSAG import BarcodeDeal as bcd
 
-inputCellBarn='./testData/BarcodeDeal/result/CellBarn_single'
+inputCellBarn = Target_Path + “Barn/CellBarn_single/”
 
-trimBarn='./testData/BarcodeDeal/result/CellTrim_single'
+trimBarn = Target_Path + “Barn/CellTrim_single/”
 
 bcd.trim(inputCellBarn,trimBarn)
 
@@ -194,9 +195,9 @@ Paired-End Data Processing
 
 from MetaSAG import BarcodeDeal as bcd
 
-inputCellBarn='./testData/BarcodeDeal/result/CellBarn_pair'
+inputCellBarn = Target_Path + “Barn/CellBarn_pair/”
 
-trimBarn='./testData/BarcodeDeal/result/CellTrim_pair'
+trimBarn = Target_Path + “Barn/CellTrim_pair/”
 
 bcd.trim(inputCellBarn,trimBarn,ReadsEnd='Pair')
 

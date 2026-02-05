@@ -69,9 +69,9 @@ SourmashEnv     --      Conda environment required for running Sourmash.
 
 from MetaSAG import UnknownSAG as usag
 
-fastqDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/MetaPhlAnAsign/result/UnknownCell/fastq' #846M
+fastqDir = Target_Path + 'Unknown/fastq/'  #846M
 
-resultDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/MetaPhlAnAsign/result/UnknownCell/testResult'
+resultDir = Target_Path + 'Unknown/result/'
 
 usag.ClusterSAG(fastqDir,resultDir,SourmashEnv='sourmash') # Initial clustering of unknown species droplets
 

@@ -83,9 +83,9 @@ from MetaSAG import Tree as tree
 
 # Build phylogenetic tree
 
-FastaDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/Tree/input' #292Mb
+FastaDir = Target_Path + 'Bin_QC/BinFastaQC2/Pass/' #292Mb
 
-TreeTemp='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/Tree/result'
+TreeTemp = Target_Path + 'Tree/TreeTemp/'
 
 tree.BuildTree(FastaDir,TreeTemp,env='anvio-7.1')
 #BuildTree took 8312.0662 seconds to execute.
@@ -94,9 +94,9 @@ tree.BuildTree(FastaDir,TreeTemp,env='anvio-7.1')
 
 # Prepare itol web tree plotting file
 
-BinAnno='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/Tree/input/BinAnno'
+BinAnno = Target_Path + 'Tree/BinAnno.txt' # Users are required to manually create the BinAnno.txt file according to the specifications above.
 
-AnnoResult='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/Tree/result/Anno'
+AnnoResult = Target_Path + 'Tree/AnnoResult'
 
 tree.itolPlot(BinAnno,AnnoResult)
 

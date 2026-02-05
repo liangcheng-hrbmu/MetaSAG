@@ -169,9 +169,10 @@ from MetaSAG import CellHGT as hgt
 
 # Identify horizontal gene transfer sequences between pairwise genomes (species-level) and generate HGT.fasta
 
-fastaDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/CellHGT/input/testSpeciesFasta' #292Mb
+fastaDir = Target_Path + 'Bin_QC/BinFastaQC2/Pass/' #292Mb
 
-HGTTemp='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/CellHGT/result/SpeciesHGTResult'
+HGTTemp = Target_Path + 'HGT/Species/'
+
 
 obj=hgt.CellHGT(fastaDir,HGTTemp)
 
@@ -183,14 +184,14 @@ obj.SpeciesHGT()
 
 ## Prepare plotting annotation files for the itol web interface
 
-TreeAnno='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/CellHGT/input/SpeciesAnno'
+TreeAnno = Target_Path + 'HGT/Species/TreeAnno.txt'
 
 obj.HGTSpeciesPlot(TreeAnno)
 # HGTSpeciesPlot took 0.0513 seconds to execute.
 
 # Annotate HGT contigs, cluster by similarity, and perform statistical analysis
 
-obj.HGTSpeciesAnno(TreeAnno,prokka_env='prokka',cdhit_env='base',emapper_env='eggnog-mapper2',emapper_DB='/data_alluser/public/database/eggnogDB/')
+obj.HGTSpeciesAnno(TreeAnno,prokka_env='prokka',cdhit_env='base',emapper_env='eggnog-mapper2',emapper_DB='/Database/eggnogDB/')
 # HGTSpeciesAnno took 433.1531 seconds to execute.
 
 ```

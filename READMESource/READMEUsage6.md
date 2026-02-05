@@ -84,7 +84,34 @@ Eg. StrainCell.txt
 |    1    | Sam1025_4770  |
 |   ...   |      ...      |
 
+
+
+
+## Func 3：StrainAssem(StrainAssemDir,StrainCellsFile)
+
+- **Function Description:**
+
+Assembles sequencing read sequences for different strains of a bacterial species.
+
+- **Required Parameter:**
+```angular2html
+
+
+StrainAssemDir  --      Assembly result file path(s) for strain sequences.
+                        Default: ""
+
+env             --      Conda environment required for running spades.py.
+                        Default: None
+
+StrainCellsFile --      Strain information file path for each droplet (StrainCells.txt).
+                        Default: ""
+
 ```
+
+
+
+```
+
 # Execution Command Examples
 
 from MetaSAG import SNPStrain as snp
@@ -92,22 +119,23 @@ from MetaSAG import SNPStrain as snp
 
 # Bin preprocessing
 
-BinDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/SNPStrain/input/SingleBin/SGB6796' #1.5Gb
+# Ensure both FASTA files and cell-specific FASTQ files are located within the same directory for downstream analysis.
+BinDir = Target_Path + 'SNPStrain/single_fastqa/SGB6796' #1.5Gb
 
-ResultDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/SNPStrain/result/SingleBin/SGB6796'
+ResultDir = Target_Path + "SNPStrain/single_result/SGB6796/"
 
-SpeciesName='SGB6796'  
+SpeciesName = 'SGB6796'  
 
-SingleBin=snp.SingleBin(BinDir,ResultDir,SpeciesName)
+SingleBin = snp.SingleBin(BinDir,ResultDir,SpeciesName)
 
-snap_aligner = '/data_alluser/singleCellMicrobiome/dmy_test/tools/SNAP/snap-aligner'
+snap_aligner = '/Tools/SNAP/snap-aligner'
 
-bcftools = '/data_alluser/singleCellMicrobiome/dmy_test/tools/bcftools/bcftools-1.18/bcftools'
+bcftools = '/Tools/bcftools/bcftools-1.18/bcftools'
 
 SingleBin.SingleBinPrepare(bcftools=bcftools,snap_aligner=snap_aligner,ReadsEnd='Pair')
 #SingleBinPrepare took 216.9003 seconds to execute.
 
-
+SingleBin.Strain
 # Query the number of dropped SNPs/cells
 
 SingleBin.DropSNPNum  # 12057
@@ -126,6 +154,10 @@ SingleBin.DropCellNum  #  3
 
 SingleBin.SingleBinSplit(2)
 #SingleBinSplit took 1.2961 seconds to execute.
+
+#Assembling
+StrainAssemDir = Target_Path + "SNPStrain/single_result/SGB6796/"
+SingleBin.StrainAssem(StrainAssemDir= StrainAssemDir)
 ```
 
 
@@ -199,6 +231,35 @@ Eg. ResultDir/BinClusterAnno.txt
 |              ...               |     ...     |    ...     |
 
 
+
+
+## Func 3：AllBinStrainAssem(StrainAssemDir)
+
+- **Function Description:**
+
+Assembles sequencing read sequences for different strains of each bacterial species.
+
+- **Required Parameter:**
+```angular2html
+
+StrainAssemDir  --      Assembly result file path(s) for strain sequences of each species.
+                        Default: ""
+
+env             --      Conda environment required for running spades.py.
+                        Default: None
+
+
+```
+
+
+
+
+
+
+
+
+
+
 ```
 # Execution Command Examples
 
@@ -207,19 +268,19 @@ from MetaSAG import SNPStrain as snp
 
 # Bin preprocessing for all bins
 
-fastaDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/SNPStrain/input/AllBin/fasta'
+fastaDir = Target_Path  + 'Bin_QC/BinFastaQC2/Pass/'
 
-fastqDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/SNPStrain/input/AllBin/fastq'
+fastqDir = Target_Path + 'Barn/CellTrim_pair/' # Trimmed single-cell files
 
-cellAnno='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/SNPStrain/input/AllBin/SNPCluster.txt'
+cellAnno = Target_Path + 'SNPStrain/All/SNPCluster.txt'
 
-resultDir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/SNPStrain/result/AllBin'
+resultDir = Target_Path + 'SNPStrain/All/'
 
 AllBin=snp.AllBin(fastaDir,fastqDir,cellAnno,resultDir)
 
-snap_aligner = '/data_alluser/singleCellMicrobiome/dmy_test/tools/SNAP/snap-aligner'
+snap_aligner = 'Tools/SNAP/snap-aligner'
 
-bcftools = '/data_alluser/singleCellMicrobiome/dmy_test/tools/bcftools/bcftools-1.18/bcftools'
+bcftools = 'Tools/bcftools/bcftools-1.18/bcftools'
 
 AllBin.AllBinPrepare(bcftools=bcftools,snap_aligner=snap_aligner,ReadsEnd='Pair')
 #AllBinPrepare took 3736.5503 seconds to execute.
@@ -230,5 +291,6 @@ AllBin.AllBinPrepare(bcftools=bcftools,snap_aligner=snap_aligner,ReadsEnd='Pair'
 AllBin.AllBinSplit()
 #AllBinSplit took 43.4115 seconds to execute
 
-
+StrainAssemDir = Target_Path + 'SNPStrain/All/Bin/'
+AllBin.AllBinStrainAssem(StrainAssemDir = StrainAssemDir)
 ```

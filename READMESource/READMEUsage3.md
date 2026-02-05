@@ -32,14 +32,14 @@ DB      --      MetaPhlAn4 Reference Database Path.
 
 from MetaSAG import MetaPhlAnAsign as mpa
 
-#test.fastq 61Mb
-inputFastq = './testData/MetaPhlAnAsign/input/test.fastq'
+#Samplename.fastq 61Mb
+inputFastq = Target_Path + 'Barn/Summary/Samplename.fastq' # Consolidated file of all trimmed cell sequences belonging to the same sample
 
-MPOut = './testData/MetaPhlanAsign/result/'
+MPOut = Target_Path + 'MetaPhlAnAsign/annotation_file/'
 
-SamName = 'test'
+SamName = 'Samplename' # The unique identifier or filename of the sample
 
-mpa.MPAnno(inputFastq,MPOut,SamName,env='metaphlan4.1',DB='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/DB_Jun23/')
+mpa.MPAnno(inputFastq,MPOut,SamName,env='metaphlan4.1',DB='/Database/MetaPhIAn4_1/DB_Jun23/')
 # MPAnno took 170.1611 seconds to execute.
 
 ```
@@ -278,22 +278,22 @@ from MetaSAG import MetaPhlAnAsign as mpa
 
 #MetaPhlAnN4 annotation
 
-inputFastq = './testData/MetaPhlanAsign/input/test.fastq'
+inputFastq = Target_Path + 'Barn/Summary/Samplename.fastq' # Consolidated file of all trimmed cell sequences belonging to the same sample
 
-output = './testData/MetaPhlanAsign/result/'
+output = Target_Path + 'MetaPhlAnAsign/annotation_file/'
 
-Sam = 'test'
+Sam = 'Samplename' # The unique identifier or filename of the sample
 
-mpa.MPAnno(inputFastq,output,Sam,env='metaphlan4.1',DB='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/DB_Jun23/')
+mpa.MPAnno(inputFastq,output,Sam,env='metaphlan4.1',DB='/Database/MetaPhIAn4_1/DB_Jun23/')
 #MPAnno took 75.6562 seconds to execute.
 
 
 
 #Build MPBowtie object
 
-input_bowtie='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/MetaPhlAnAsign/input/S10_bowtie2' #497Mb
+input_bowtie = Target_Path + 'MetaPhlAnAsign/annotation_file/Samplename_bowtie2' #497Mb
 
-result_dir='/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/MetaPhlAnAsign/result/'
+result_dir = Target_Path + 'MetaPhlAnAsign/MPAsign/'
 
 obj=mpa.MPBowtie(input_bowtie,result_dir) 
 
@@ -320,7 +320,7 @@ obj.Cell_Erro_Count
 
 import pandas as pd
 
-BC_Count=pd.read_csv('./testData/MetaPhlAnAsign/input/S10_bcread.txt',sep='\t',header=0)
+BC_Count = pd.read_csv(Target_Path + 'Cell_Filter/bcread.txt',sep='\t',header=0)
 
 obj.CellAsign(BC_Count) 
 #CellAsign took 175.5504 seconds to execute.
@@ -352,21 +352,18 @@ obj.HostPhage()
 
 #View the species distribution of multi-cell droplets.
 
-#CellBarn='/data_alluser/singleCellMicrobiome/rawdata_bdwp/202405_standard/all/'
+CellBarn = Target_Path + 'Barn/CellTrim_single/' # Trimmed single-cell files
 
-CellBarn='/data_alluser/singleCellMicrobiome/dmy_test/SAGget/S10_real_SAGs/'
-
-obj.DoubleCellKraken(CellBarn,env='kraken',KrakenDB='/data_alluser/public/database/k2_standard_20230605/',ReadsEnd='Single')
+obj.DoubleCellKraken(CellBarn,env='kraken',KrakenDB='/Database/k2_standard_20230605/',ReadsEnd='Single')
 # DoubleCellKraken took 3466.3195 seconds to execute.
 
 
 #Assemble cells provided by obj.KnownCellAssem
 # 1185 Cells
 
-#obj.KnownCellAssem=pd.read_csv('/data_alluser/singleCellMicrobiome/dmy_test/gj/MetaPhIAn4_1/PyPack/PyPackData2/testData/MetaPhlanAsign/result/KnownCellAssemShort.txt',sep='\t',header=0)
+#obj.KnownCellAssem = pd.read_csv( Target_Path + 'MetaPhlAnAsign/MPAsign/KnownCellAssemShort.txt',sep='\t',header=0)
 
-#CellBarn='/data_alluser/singleCellMicrobiome/rawdata_bdwp/202405_standard/all/'
-CellBarn='/data_alluser/singleCellMicrobiome/dmy_test/SAGget/S10_real_SAGs/'
+CellBarn = Target_Path + 'Barn/CellTrim_single/' # Trimmed single-cell files
 
 obj.CellAssem(CellBarn,ReadsEnd='Single')
 #CellAssem took 3404.0547 seconds to execute.
