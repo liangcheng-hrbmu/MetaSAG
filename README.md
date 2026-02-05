@@ -79,6 +79,9 @@ other tools or packages you need and their version we list here:
 -  [**Step 6. Species to Strain resolved genomes**](READMESource/READMEUsage6.md)
 -  [**Step 7. Horizontal Gene Transfer**](READMESource/READMEUsage7.md)
 -  [**Step 8. HUMAnN Path**](READMESource/READMEUsage8.md)
+-  [**Step 9. Droplet clustering of potentially unknown species**](READMESource/READMEUsage9.md)
+-  [**Step 10. SGB Strain Evolution Analysis Function**](READMESource/READMEUsage10.md)
+-  [**Step 11. MetaK-Lytic**](READMESource/READMEUsage11.md)
 
 
 
