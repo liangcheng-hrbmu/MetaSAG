@@ -6,8 +6,8 @@
 
 ## What is it?
 
-In a single sample, **single-cell microbial genome droplet sequencing technology** can generate tens of thousands of droplet short-read sequencing data at a time.
-**MetaSAG** enables **efficient and easy** procedural bioinformatics analysis of large raw sequencing data.
+**Microbial single-amplified genome (SAG) droplet sequencing technology** can generate tens of thousands of droplet short-read sequencing data at a time, elevating microbial research resolution to the single-cell level.
+We offer **MetaSAG**, a comprehensive integrated tool that can parse microbial SAG data from raw data to the strain level to decipher the functional ecology of microbial dark matter, with broad implications for microbial ecology and phage therapy.
 
 ![Framework](READMESource/Framework2.png)
 
@@ -27,7 +27,7 @@ In a single sample, **single-cell microbial genome droplet sequencing technology
 
 
 ## Main Features
-- Here are just a few of the things that AAA does well:
+- Here are just a few of the things that **MetaSAG** does well:
 
   - According to the distribution of short reading segments of droplets in the sample,
     low-quality droplets are removed, and the soft threshold is more scientific.
@@ -39,10 +39,10 @@ In a single sample, **single-cell microbial genome droplet sequencing technology
   - The definition of cell category is flexible, and the default threshold or custom threshold can be used.
   - Assembling genomes of known classified cell boxes is efficient and accurate.
   - The main phage viruses in the sample can be identified.
-  - Streamlined downstream functional analysis (phylogenetic tree, SNP classification strain, HGT level gene transfer)
+  - Species- and strain-level streamlined downstream functional analysis (phylogenetic tree, SNP classification strain and evolution analysis, HGT level gene transfer)
   - According to Uniref90 features and using [**HuMann3 Tool**][HuMann3], the designated cells are clustered, and the similarity between
     cell clusters is analyzed from the functional point of view.
-
+  - Phage lytic ability prediction (MetaK-Lytic).
 
    [MetaPhlAn4]: https://github.com/biobakery/MetaPhlAn
    [HuMann3]: https://github.com/biobakery/humann
@@ -98,5 +98,6 @@ MetaSAG is free for academic use only.
 ## Contact
 If you have any comments or suggestions about MetaSAG please raise an issue or contact us:
 
-Dumeiyu: 2023020560@hrbmu.edu.cn
+Professor Liang Cheng: liangcheng@hrbmu.edu.cn
+
 
