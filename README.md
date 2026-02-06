@@ -9,7 +9,7 @@
 **Microbial single-amplified genome (SAG) droplet sequencing technology** can generate tens of thousands of droplet short-read sequencing data at a time, elevating microbial research resolution to the single-cell level.
 We offer **MetaSAG**, a comprehensive integrated tool that can parse microbial SAG data from raw data to the strain level to decipher the functional ecology of microbial dark matter, with broad implications for microbial ecology and phage therapy.
 
-![Framework](READMESource/Framework2.png)
+![Framework](READMESource/workflow.png)
 
 
 ## Table of Contents
@@ -99,5 +99,6 @@ MetaSAG is free for academic use only.
 If you have any comments or suggestions about MetaSAG please raise an issue or contact us:
 
 Professor Liang Cheng: liangcheng@hrbmu.edu.cn
+
 
 
