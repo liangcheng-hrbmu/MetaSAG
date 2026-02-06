@@ -30,6 +30,23 @@ your_data_folder/
 │   └── SGB5678_SNPpd.txt<br>
 └── ...<p>
 
+The content of **StrainCells.txt** is as follows:
+| Cluster | Cell |
+|-------|-------|
+| 0 | Cell1102933 |
+| 0 | Cell1102934 |
+| 1 | Cell1102935 |
+| 1 | Cell1102936 |
+| ... | ... |
+
+The content of **_SNPpd.txt** is as follows:
+| Cell1102933 | Cell1102934 | Cell1102935 | Cell1102936 | ... |
+|-------|-------|-------|-------|-------|
+| 0 |  1 |  0 |  0 |  0 | 
+| 0 |  0 |  1 |  0 |  0 | 
+| 0 |  0 |  0 |  -1 |  0 | 
+| 0 |  0 |  1 |  0 |  0 | 
+| ... | ... | ... | ... | ... | 
 
 ## Quick Start
 
