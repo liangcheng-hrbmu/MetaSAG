@@ -14,9 +14,6 @@ Calls ANVI'O to build a phylogenetic tree for genome files in the input director
 FastaDir        --      Path to input genome files (must be an absolute path).
 
 TreeTemp        --      Path to save the tree file results.
-
-
-
 ```
 
 
@@ -42,12 +39,9 @@ Organizes provided genome information into a data format suitable for plotting p
 
 - **Required Parameters:**
 ```
-
 BinAnno     --      Information about genome files.
 
 Anno        --      Path to save the itol plotting format results file.
-
-
 ```
 
 Eg. BinAnno (without phylum-level color mapping)
@@ -74,6 +68,23 @@ Eg. BinAnno (with phylum-level color mapping)
 
 ![Tree](Tree.png)
 
+## Func 3：GenerateBinAnno(fasta_dir, cell_anno_file, summary_file, output_file)
+
+- **Function Description:**
+
+This function automatically generates the final bin annotation file to prepare for downstream phylogenetic tree construction by seamlessly aggregating cell annotations and quality control summaries from the executed upstream pipeline modules (MetaSAG_MetaPhlAnAsign and MetaSAG_BinQCAnno).
+
+
+- **Required Parameters:**
+```
+fasta_dir       --      The directory containing the FASTA files used for phylogenetic tree construction.
+
+cell_anno_file  --      The path to the `CellAnno.txt` file generated in the `MetaSAG_MetaPhlAnAsign` step. 
+
+summary_file    --      The path to the `summary.txt` file generated in the `MetaSAG_BinQCAnno` step. 
+                        
+output_file     --      The full output path and filename designated for the resulting `BinAnno.txt` data table. 
+```
 
 
 ```
@@ -81,9 +92,23 @@ Eg. BinAnno (with phylum-level color mapping)
 
 from MetaSAG import Tree as tree
 
+# Generate BinAnno file
+
+FastaDir = Target_Path + 'Bin_QC/Pass/'
+
+CellAnno = Target_Path + 'MetaPhlAnAsign/MPAsign/CellAnno.txt'
+
+Summary = Target_Path + 'Bin_QC/summary.txt'
+
+BinAnno = Target_Path + 'Tree/BinAnno.txt'
+
+tree.GenerateBinAnno(FastaDir, CellAnno, Summary, BinAnno)
+
+
+
 # Build phylogenetic tree
 
-FastaDir = Target_Path + 'Bin_QC/BinFastaQC2/Pass/' #292Mb
+FastaDir = Target_Path + 'Bin_QC/Pass/' #292Mb
 
 TreeTemp = Target_Path + 'Tree/TreeTemp/'
 
@@ -94,7 +119,7 @@ tree.BuildTree(FastaDir,TreeTemp,env='anvio-7.1')
 
 # Prepare itol web tree plotting file
 
-BinAnno = Target_Path + 'Tree/BinAnno.txt' # Users are required to manually create the BinAnno.txt file according to the specifications above.
+BinAnno = Target_Path + 'Tree/BinAnno.txt' # Users may either manually create the BinAnno.txt file according to the specifications above or generate it automatically using the GenerateBinAnno function.
 
 AnnoResult = Target_Path + 'Tree/AnnoResult'
 

@@ -55,7 +55,17 @@ SecondDrv_xlim      --      Specifies the horizontal axis range for second deriv
 ## Func 3：BCMinReads()
 
 - **Function Description:**
-Filters cellular barcodes (droplets) based on a minimum read count threshold, generating a validated barcode output file.
+Filters cellular barcodes (droplets) based on a minimum read count threshold, generating a validated barcode output file, and subsequently filters the Fastq files to retain only those reads associated with the validated cells.
+
+- **Optional Parameters:**
+```
+filter_outdir       --      The save path for the filtered files .
+                            Default Path: self.outputdir
+                            
+filter_outname      --      The naming prefix for the filtered Fastq files.
+                            Default Name: BCFilterFile
+                            
+```
 
 
 
@@ -70,6 +80,8 @@ inputFastq = Target_Path + “Barn/Summary/Samplename.fastq” # Consolidated fi
 
 resultDir = Target_Path + “Cell_Filter/”
 
+filter_path = Target_Path + "2_Cell_Filter/All_Sample_Fastq"
+
 obj=bcf.BCFilter( inputFastq ,resultDir )
 
 obj.CellCountStatistic()
@@ -82,7 +94,7 @@ obj.getMinReads()
 
 # obj.min_reads:Minimum Droplet Read Count Threshold (Configurable)
 
-obj.BCMinReads()
+obj.BCMinReads( filter_path , filter_outname = SamName ) 
 
 #obj.BC_Count_Filter:Generates a curated list of cellular barcodes that meet or exceed the specified minimum read count threshold (obj.min_reads)
 

@@ -178,7 +178,13 @@ env         --      The name of the conda environment required for the assembly 
 ReadsEnd    --      The type of droplet sequencing files input (single-end or paired-end).
                     The default setting is for single-end reads, with ReadsEnd='Single'. For paired-end reads, modify it to ReadsEnd='Pair'.
 
+phred_offset--      Manually set the sequencing format of the Fastq files used for assembly.
+                    Default Value: None.
+
 ```
+
+Note on phred_offset:
+Normally, the SPAdes assembler automatically detects the quality value format of Fastq files (recent Illumina sequencing data is usually Phred+33). However, when encountering non-standard data that causes SPAdes to fail automatic detection and throw an error, this parameter can be used to forcefully specify the format manually.
 
 
 ## Func 4：HostPhage(Group='SGB',cumThresh=0.8 ,MinCellPhage=50)

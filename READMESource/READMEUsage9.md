@@ -1,7 +1,22 @@
 # MetaSAG Usage 
 ## Step 9. Droplet clustering of potentially unknown species
 
-## Func 1：ClusterSAG(inputFastq,outputDir)
+## Func 1：FilterUnassignedCells(AnnotationFile, inputFastqDir, OutputDir)
+- **Function Description:**
+
+Automatically selects droplets that potentially belong to unknown species based on upstream annotation files and generates independent working directories for their aggregation.
+
+- **Required Parameters:**
+```
+AnnotationFile  --      The path to the `CellAnno.txt` file generated in the upstream `MetaSAG_MetaPhlAnAsign` step. 
+
+inputFastq      --      The directory containing the individual FASTQ files for each cell.
+
+outputDir       --      Path to the output directory.
+```
+
+
+## Func 2：ClusterSAG(inputFastq,outputDir)
 - **Function Description:**
 
 Performs clustering (first round) on selected potentially unknown species.
@@ -25,13 +40,19 @@ SpadesEnv       --      Conda environment required for running Spades.py.
                         Default: None
                         
 SourmashEnv     --      Conda environment required for running Sourmash.
-                        Default: None                   
+                        Default: None            
 
+ClusterThreshold--      The cut-off threshold used for forming flat clusters.
+                        Default: 0.95.  
+
+ClusterCriterion--      The criterion used to determine cluster formation.
+                        Available options are 'distance' and 'inconsistent'.
+                        Default: 'distance'.     
 ```
 
 
 
-## Func 2：ClusterBin(OldRoundFold,NewRoundFold)
+## Func 3：ClusterBin(OldRoundFold,NewRoundFold)
 
 - **Function Description:**
 
@@ -57,8 +78,14 @@ SpadesEnv       --      Conda environment required for running Spades.py.
                         Default: None
                         
 SourmashEnv     --      Conda environment required for running Sourmash.
-                        Default: None                   
+                        Default: None
 
+ClusterThreshold--      The cut-off threshold used for forming flat clusters.
+                        Default: 0.95.  
+
+ClusterCriterion--      The criterion used to determine cluster formation.
+                        Available options are 'distance' and 'inconsistent'.
+                        Default: 'distance'.                      
 ```
 
 
@@ -69,16 +96,22 @@ SourmashEnv     --      Conda environment required for running Sourmash.
 
 from MetaSAG import UnknownSAG as usag
 
-fastqDir = Target_Path + 'Unknown/fastq/'  #846M
+fastqDir = Target_Path + 'CellBarn/'  #846M
 
-resultDir = Target_Path + 'Unknown/result/'
+cellAnno =  Target_Path + 'MetaPhlAnAsign/MPAsign/CellAnno.txt'
 
-usag.ClusterSAG(fastqDir,resultDir,SourmashEnv='sourmash') # Initial clustering of unknown species droplets
+outputdir = Target_Path + 'UnknownSAG/'
 
-Round1Dir=os.path.join(resultDir,'Round1')
+fastq_outputdir = outputdir + "Fastq/"
 
-Round2Dir=os.path.join(resultDir,'Round2')
+usag.FilterUnassignedCells(cellAnno, fastqDir, fastq_outputdir)
 
-usag.ClusterBin(Round1Dir,Round2Dir) # Re-clustering of unknown species droplet bins based on initial results
+usag.ClusterSAG(fastq_outputdir,outputdir,ReadsEnd = 'Pair',SourmashEnv='sourmash') # Initial clustering of unknown species droplets
+
+Round1Dir=os.path.join(outputdir,'Round1')
+
+Round2Dir=os.path.join(outputdir,'Round2')
+
+usag.ClusterBin(Round1Dir,Round2Dir,ReadsEnd = 'Pair',SourmashEnv='sourmash') # Re-clustering of unknown species droplet bins based on initial results
 
 ```

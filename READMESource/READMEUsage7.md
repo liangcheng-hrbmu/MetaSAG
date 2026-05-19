@@ -41,6 +41,7 @@ GTCTATTGATGAGCAAGGACTGAGCAGTG...
 Organize provided tree node information into a data format suitable for plotting phylogenetic trees on the itol web interface.
 
 Eg. TreeAnno
+You can directly utilize the `BinAnno` file used by the `MetaSAG_Tree` workflow.
 
 |   File    | SpeciesID |     Phylum     | Phylum_Color |
 |:---------:|:---------:|:--------------:|:------------:|
@@ -169,7 +170,7 @@ from MetaSAG import CellHGT as hgt
 
 # Identify horizontal gene transfer sequences between pairwise genomes (species-level) and generate HGT.fasta
 
-fastaDir = Target_Path + 'Bin_QC/BinFastaQC2/Pass/' #292Mb
+fastaDir = Target_Path + 'Bin_QC/Pass/' #292Mb
 
 HGTTemp = Target_Path + 'HGT/Species/'
 
@@ -180,11 +181,9 @@ obj.SpeciesHGT()
 #SpeciesHGT took 5402.5489 seconds to execute.
 
 
-
-
 ## Prepare plotting annotation files for the itol web interface
 
-TreeAnno = Target_Path + 'HGT/Species/TreeAnno.txt'
+TreeAnno = Target_Path + 'Tree/BinAnno.txt'
 
 obj.HGTSpeciesPlot(TreeAnno)
 # HGTSpeciesPlot took 0.0513 seconds to execute.

@@ -9,7 +9,8 @@ Classifies all sequencing reads and annotates biological pathways using HUMAnN.
 - **Required Parameters:**
 ```
 
-FastqDir        --      Path to the fastq files directory.
+FastqDir        --      Path to the input FASTQ data.
+                        Accepts either the absolute path of a single FASTQ file or a directory containing all target files for batch analysis.
 
 ResultDir       --      Path to save the results.
 
@@ -80,19 +81,21 @@ Combines cell grouping information from CellAnno and Group to annotate biologica
 CellAnno        --      Path to the cell grouping information file.
 
 Group           --      Name of the grouping column in CellAnno.
-
 ```
 
 
-- **可选参数：**
+- **Optional Parameters:**
 ```
 HUMAnNenv       --      Conda environment required for running HUMAnN.
                         Default: None
 
+ExcludeGroups   --      Specifies groups or bins to be excluded from the analysis (e.g., 'NoSGB'). 
+                        Accepts either a single string or a list of strings.
+                        Default: None.    
 ```
 
 
-Eg. CellAnno (SeuratResult/KnownSGBCell_ClusterCell.txt)
+Eg. CellAnno (Target_Path/HUMAnNPath/SeuratResult/KnownSGBCell_ClusterCell.txt)
 
 | Cluster |     Cell      |
 |:-------:|:-------------:|
@@ -110,20 +113,17 @@ Eg. CellAnno (SeuratResult/KnownSGBCell_ClusterCell.txt)
 
 
 ```
-
 # Execution Command Examples
 
 from MetaSAG import HUMAnNPath as hp
 
 # Create an HP object
 
-fastqDir = Target_Path + 'HUMAnNPath/fastq/'  #292Mb
+fastqDir = Target_Path + 'Fastq/'  #292Mb
 
-resultDir = Target_Path + 'HUMAnNPath/result/' 
+resultDir = Target_Path + 'HUMAnNPath/' 
 
 obj=hp.HP(fastqDir,resultDir)
-
-
 
 # Perform Diamond alignment on each fastq file
 
@@ -131,18 +131,19 @@ obj.Diamond(DiamondDB = '/Database/uniref/uniref90_201901b_full.dmnd')
 
 # obj.DiamondDir 
 
-# 'Target_Path + 'HUMAnNPath/result/DiamondDir'
+# 'Target_Path + 'HUMAnNPath/DiamondDir'
 # If the user performs Diamond alignment independently, modify obj.DiamondDir to specify the directory containing Diamond alignment results for subsequent analysis.
-# obj.DiamondDir = Target_Path + 'HUMAnNPath/result/Diamond'
+
+# obj.DiamondDir = Target_Path + 'HUMAnNPath/Diamond'
+
 obj.Uniref2Matrix()
 # Uniref2Matrix took 4.7900 seconds to execute.
+
 obj.SeuratCluster()
 # SeuratCluster took 16.6086 seconds to execute.
 
-cellAnno = Target_Path + 'HUMAnNPath/result/SeuratResult/KnownSGBCell_ClusterCell.txt'
+cellAnno = Target_Path + 'HUMAnNPath/SeuratResult/KnownSGBCell_ClusterCell.txt'
+
 obj.HUMAnNPath(cellAnno,'Cluster',HUMAnNenv='humann')
 # HUMAnNPath took 581.9383 seconds to execute.
-
-
-
 ```
