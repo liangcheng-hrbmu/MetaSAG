@@ -52,7 +52,7 @@ We offer **MetaSAG**, a comprehensive integrated tool that can parse microbial S
 
 - **Install**
 ```
-pip install metasag
+pip install MetaSAG
 ```
 
 - **Requirements**
