@@ -52,7 +52,7 @@ We offer **MetaSAG**, a comprehensive integrated tool that can parse microbial S
 
 - **Install**
 ```
-pip install MetaSAG
+pip install metasag
 ```
 
 - **Requirements**
@@ -99,6 +99,7 @@ MetaSAG is free for academic use only.
 If you have any comments or suggestions about MetaSAG please raise an issue or contact us:
 
 Professor Liang Cheng: liangcheng@hrbmu.edu.cn
+
 
 
 
