@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-#from distutils.core import setup
 
 def readme_file():
     with open("README.md", encoding="utf-8") as rf:
@@ -7,17 +6,42 @@ def readme_file():
 
 setup(
     name='MetaSAG',
-    version='1.0.20',
-    description='Just Test PyPI Package',
+    version='1.3.0',
+    description='A compiled and protected Python test package',
     long_description=readme_file(),
     long_description_content_type="text/markdown",
-    author='DMY',
-    author_email='2023020560@hrbmu.edu.cn',
-    url='https://github.com',
+    author='LiangCheng',
+    author_email='liangcheng@hrbmu.edu.cn',
+    url='https://github.com/liangcheng-hrbmu/MetaSAG',
     packages=find_packages(),
-    package_data={'':['READMESource/*']},
+    package_data={
+        '': ['READMESource/*', '*.h5', '*.R', '*.npy'], 
+    },
     include_package_data=True,
-    #py_modules=['MetaSAG.BarcodeDeal','MetaSAG.BCFilter','MetaSAG.BinQCAnno','MetaSAG.CellHGT','MetaSAG.HUMAnNPath','MetaSAG.MetaPhlAnNAsign','SNPStrain'],
-    python_requires='>=3.6'
-)
 
+    scripts=[
+        'MetaSAG/k-mer.py',
+        'MetaSAG/k_mer_union.py',
+        'MetaSAG/MetaK_Lytic.py',
+        'MetaSAG/phage_predictor.py',
+        'MetaSAG/strain_analysis_multi_sgb.R'
+    ],
+
+    python_requires='>=3.6',
+
+    install_requires=[
+        'setuptools<60.0.0',
+        'numpy',
+        'pandas',
+        'openpyxl',       
+        'matplotlib',
+        'seaborn',
+        'scipy',          
+        'umap-learn',     
+        'scikit-learn',   
+        'statsmodels',    
+        'biopython',      
+        'tensorflow>=2.0',
+        'h5py',           
+    ],
+)
