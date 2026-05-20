@@ -39,3 +39,11 @@ Note that at this point, <mark>the first three steps still need to be followed t
 
 
 Download it, and then run `python phage_predictor.py`
+
+
+## Pre-trained Model
+- [`final_model.h5`](final_model.h5)
+
+## Example Files
+1. [`example_Lytic.npy`](example_Lytic.npy)  
+2. [`example_temperate_feature.npy`](example_temperate_feature.npy)
