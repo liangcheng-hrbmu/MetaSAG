@@ -34,7 +34,7 @@ python MetaK_Lytic.py --mode test --temperate-file ./temperate_features.npy --ly
 
 ## 5. pre-trained model
 
-If you don't want to use your own data for training and testing, here we provide you with a pre-trained model named "final_model.h5".
+If you don't want to use your own data for training, here we provide you with a pre-trained model named "final_model.h5".
 Note that at this point, <mark>the first three steps still need to be followed to obtain the.npy format sequence feature file</mark>.
 
 
