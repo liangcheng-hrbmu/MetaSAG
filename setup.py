@@ -6,7 +6,7 @@ def readme_file():
 
 setup(
     name='MetaSAG',
-    version='1.3.0',
+    version='1.3.7',
     description='A compiled and protected Python test package',
     long_description=readme_file(),
     long_description_content_type="text/markdown",
@@ -30,7 +30,7 @@ setup(
     python_requires='>=3.6',
 
     install_requires=[
-        'setuptools<60.0.0',
+        'setuptools==59.8.0',
         'numpy',
         'pandas',
         'openpyxl',       
