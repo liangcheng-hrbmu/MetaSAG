@@ -52,7 +52,9 @@ We offer **MetaSAG**, a comprehensive integrated tool that can parse microbial S
 
 - **Install**
 ```
-pip install MetaSAG
+MetaSAG is currently undergoing testing on TestPyPI. To ensure all dependencies (such as pandas, tensorflow) are installed correctly, please use the following command for installation:
+
+pip install --index-url [https://test.pypi.org/simple/](https://test.pypi.org/simple/) --extra-index-url [https://pypi.org/simple/](https://pypi.org/simple/) metasag==1.3.7
 ```
 
 - **Requirements**
