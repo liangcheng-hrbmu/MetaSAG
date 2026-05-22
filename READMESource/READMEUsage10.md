@@ -30,50 +30,33 @@ your_data_folder/
 │   └── SGB5678_SNPpd.txt<br>
 └── ...<p>
 
-The content of **StrainCells.txt** is as follows:
-| Cluster | Cell |
-|-------|-------|
-| 0 | Cell1102933 |
-| 0 | Cell1102934 |
-| 1 | Cell1102935 |
-| 1 | Cell1102936 |
-| ... | ... |
-
-The content of **_SNPpd.txt** is as follows:
-| Cell1102933 | Cell1102934 | Cell1102935 | Cell1102936 | ... |
-|-------|-------|-------|-------|-------|
-| 0 |  1 |  0 |  0 |  0 | 
-| 0 |  0 |  1 |  0 |  0 | 
-| 0 |  0 |  0 |  -1 |  0 | 
-| 0 |  0 |  1 |  0 |  0 | 
-| ... | ... | ... | ... | ... | 
 
 ## Quick Start
 
 ```bash
 # Basic usage - just point to your SGB folders
-Rscript strain_analysis_multi_sgb.R -i /path/to/your/SGB_folders
+strain_analysis_multi_sgb.R -i /path/to/your/SGB_folders
 
 # With custom output directory
-Rscript strain_analysis_multi_sgb.R -i /path/to/SGB_folders -o /my/output
+strain_analysis_multi_sgb.R -i /path/to/SGB_folders -o /my/output
 ```
 
 ## Common Options
 ```bash
 
 # Skip already analyzed SGBs
-Rscript strain_analysis_multi_sgb.R -i /data/SGBs --skip-existing
+strain_analysis_multi_sgb.R -i /data/SGBs --skip-existing
 
 # Change genome size (default: 5,000,000 bp)
-Rscript strain_analysis_multi_sgb.R -i /data/SGBs --genome-size 3000000
+strain_analysis_multi_sgb.R -i /data/SGBs --genome-size 3000000
 
 # Use custom mutation rates
-Rscript strain_analysis_multi_sgb.R -i /data/SGBs \
+strain_analysis_multi_sgb.R -i /data/SGBs \
   --mutation-rate-medium 3e-6 \
   --generation-time-medium 3
 
 # Run with debug output
-Rscript strain_analysis_multi_sgb.R -i /data/SGBs --debug
+strain_analysis_multi_sgb.R -i /data/SGBs --debug
 ```
 
 ## Output
@@ -96,5 +79,5 @@ Check the log files in the output folder, or run with --debug for more details.
 Minimal command to get started:
 ```bash
 
-Rscript strain_analysis_multi_sgb.R -i /your/data/folder
+strain_analysis_multi_sgb.R -i /your/data/folder
 ```
