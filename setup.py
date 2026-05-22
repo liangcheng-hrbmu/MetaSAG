@@ -6,7 +6,7 @@ def readme_file():
 
 setup(
     name='MetaSAG',
-    version='1.3.7',
+    version='1.3.9',
     description='A compiled and protected Python test package',
     long_description=readme_file(),
     long_description_content_type="text/markdown",
