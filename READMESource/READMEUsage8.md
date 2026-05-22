@@ -112,7 +112,7 @@ Eg. CellAnno (Target_Path/HUMAnNPath/SeuratResult/KnownSGBCell_ClusterCell.txt)
 
 
 
-```
+```bash
 # Execution Command Examples
 
 from MetaSAG import HUMAnNPath as hp

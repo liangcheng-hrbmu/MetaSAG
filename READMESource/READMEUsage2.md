@@ -70,7 +70,7 @@ filter_outname      --      The naming prefix for the filtered Fastq files.
 
 
 
-```
+```bash
 #Execution Command Examples
 
 from MetaSAG import BCFilter as bcf
@@ -130,7 +130,7 @@ outputDir --  Specifies the directory path where all output files will be saved.
 
 ```
 
-```
+```bash
 #Execution Command Examples
 
 AllCell = [3132, 4557, 2321, 3433, 4500]

@@ -57,7 +57,7 @@ AAAAAE#EEEEEEEEEEEEEEEEEEEEEEEAEEEEEEEEEEEEEEEEEEEEEEEEEEE6/EEEEEEAEEAAEEE/EEEEE
 ```
 
 
-```
+```bash
 #Execution Command Examples
 
 from MetaSAG import BarcodeDeal as bcd
@@ -105,7 +105,7 @@ AAAA/E/EEAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE6EEEEEEEEEAEA<EEE//EEA
 
 - **Paired-End Data Processing**
 
-```
+```bash
 #Execution Command Examples
 
 from MetaSAG import BarcodeDeal as bcd
@@ -167,7 +167,7 @@ threads         --  Default parameter (JAR config): 12
 
 
 Single-End Data Processing
-```
+```bash
 #Execution Command Examples
 
 from MetaSAG import BarcodeDeal as bcd
@@ -190,7 +190,7 @@ trim took 420.1405 seconds to execute.
 
 
 Paired-End Data Processing
-```
+```bash
 #Execution Command Examples
 
 from MetaSAG import BarcodeDeal as bcd

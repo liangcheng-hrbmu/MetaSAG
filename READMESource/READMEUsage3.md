@@ -27,7 +27,7 @@ DB      --      MetaPhlAn4 Reference Database Path.
 
 ```
 
-```
+```bash
 #Execution Command Examples
 
 from MetaSAG import MetaPhlAnAsign as mpa
@@ -277,7 +277,7 @@ ReadsEnd    --      Specifies whether the input droplet sequencing files are sin
 
 
 
-```
+```bash
 #Execution Command Examples
 
 from MetaSAG import MetaPhlAnAsign as mpa

@@ -87,7 +87,7 @@ output_file     --      The full output path and filename designated for the res
 ```
 
 
-```
+```bash
 # Execution Command Examples
 
 from MetaSAG import Tree as tree

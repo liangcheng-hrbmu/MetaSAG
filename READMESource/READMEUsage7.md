@@ -162,7 +162,7 @@ emapper_DB      --      Path to the Eggnog-mapper reference database.
 ```
 
 
-```
+```bash
 # Execution Command Examples
 
 from MetaSAG import CellHGT as hgt

@@ -142,7 +142,7 @@ ReadsEnd        --      Type of droplet sequencing reads (single-end or paired-e
 ```
 
 
-```
+```bash
 # Execution Command Examples
 
 from MetaSAG import SNPStrain as snp
@@ -318,7 +318,7 @@ Eg.Strain_Analysis_Summary.csv
 |   SGB4577   | SUCCESS  |      16      |
 |   SGB4834   | No Fasta |      0       |
 
-```
+```bash
 # Execution Command Examples
 
 from MetaSAG import SNPStrain as snp

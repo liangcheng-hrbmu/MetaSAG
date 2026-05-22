@@ -90,7 +90,7 @@ ClusterCriterion--      The criterion used to determine cluster formation.
 
 
 
-```
+```bash
 
 # Execution Command Examples
 

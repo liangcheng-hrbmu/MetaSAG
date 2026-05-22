@@ -43,7 +43,7 @@ FastgDir        --      If a fastg folder is provided, copy corresponding fastg 
                         Default: None.
 ```
 
-```
+```bash
 #Execution Command Examples
 
 from MetaSAG import BinQCAnno as bqa
@@ -130,7 +130,7 @@ max_het     --      The maximum strain heterogeneity threshold used to determine
 ```
 
 
-```
+```bash
 #Execution Command Examples
 
 from MetaSAG import BinQCAnno as bqa
@@ -219,7 +219,7 @@ Eg. Summary.txt
 
 
 
-```
+```bash
 #Execution Command Examples
 
 from MetaSAG import BinQCAnno as bqa
