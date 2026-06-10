@@ -15,7 +15,7 @@ We offer **MetaSAG**, a comprehensive integrated tool that can parse microbial S
 ## Table of Contents
 
 - [Main Features](#Main-Features)
-- [Installation and requirements](#Installation-and-requirements)
+- [Requirements and installation](#Requirements-and-installation)
 - [Usage](#Usage)
 - [FAQs](#FAQs)
 - [License](#License)
@@ -48,7 +48,14 @@ We offer **MetaSAG**, a comprehensive integrated tool that can parse microbial S
    [HuMann3]: https://github.com/biobakery/humann
 
 
-## Installation and requirements
+## Requirements and installation
+
+- **Requirements**
+```
+MetaSAG requires Python version >= 3.8.0, R version >= 4.2.2, 
+other tools or packages you need and their version we list here:
+```
+[Tools we recommand](READMESource/ReadMETool.md)
 
 - **Install**
 
@@ -59,19 +66,6 @@ git clone https://github.com/liangcheng-hrbmu/MetaSAG.git
 cd MetaSAG
 pip install .
 ```
-
-- **Requirements**
-```
-MetaSAG requires Python version >= 3.8.0, R version >= 4.2.2, 
-other tools or packages you need and their version we list here:
-```
-[Tools we recommand](READMESource/ReadMETool.md)
-
-
-
-
-
-
 
 
 
