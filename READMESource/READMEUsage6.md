@@ -1,357 +1,196 @@
 # MetaSAG Usage 
-## Step 6. Species to Strain resolved genomes.
+## Step 6. Build phylogenetic tree.
 
-## Class1：SingleBin(BinDir, ResultDir, SpeciesName)
-- **Class Function:**
 
-Clusters cells within a single species-level bin into strain-level clusters.
-
-- **Required Parameters:**
-```
-BinDir      --      Path to the species bin directory.
-                    The bin must contain fastq sequencing files for each cell and the bin's assembled genome fasta file.    
-
-ResultDir   --      Path to save the strain-clustering results.
-
-SpeciesName --      Name of the bin's assembled genome file (without the .fasta suffix), also serving as the prefix for result filenames.
-
-```
-
-## Func 1：SingleBinPrepare()
+## Func 1：BuildTree(FastaDir,TreeTemp,env=None)
 
 - **Function Description:**
 
-Performs variant calling, SNP-based cell clustering, and plotting. For BAM sorting, two methods are available (SAMtools and SNAP), with SAMtools used by default.
+Calls ANVI'O to build a phylogenetic tree for genome files in the input directory.
 
-- **Optional Parameters:**
 
+- **Required Parameters:**
+```
+FastaDir        --      Path to input genome files (must be an absolute path).
+
+TreeTemp        --      Path to save the tree file results.
 ```
 
-bcftools        --      Path to the bcftools executable.
-                        Default: None
+
+- **Optional Parameters:**
+```
+env         --      Conda environment for running ANVI'O.
+                    Default: None.
+```
+
+- **Result:**
+
+phylogenomic-tree_Bacteria_71_ribosomal6.txt
+
+
+
+
+## Func 2：itolPlot(BinAnno,Anno)
+
+- **Function Description:**
+
+Organizes provided genome information into a data format suitable for plotting phylogenetic trees on the itol web interface.
+
+
+- **Required Parameters:**
+```
+BinAnno     --      Information about genome files.
+
+Anno        --      Path to save the itol plotting format results file.
+```
+
+Eg. BinAnno (without phylum-level color mapping)
+
+|   Bin   | CellNum |     Phylum     |
+|:-------:|:-------:|:--------------:|
+| genome1 |   91    |   Firmicutes   |
+| genome2 |   44    | Actinobacteria |
+| genome3 |   18    | Actinobacteria |
+|   ...   |   ...   |      ...       |
+
+
+
+Eg. BinAnno (with phylum-level color mapping)
+
+|   Bin   | CellNum |     Phylum     |  Color  |
+|:-------:|:-------:|:--------------:|:-------:|
+| genome1 |   91    |   Firmicutes   | #705e78 |
+| genome2 |   44    | Actinobacteria | #fea443 |
+| genome3 |   18    | Actinobacteria | #fea443 |
+|   ...   |   ...   |      ...       |   ...   |
+
+- **Result:**
+
+![Tree](Tree.png)
+
+## Func 3：GenerateBinAnno(fasta_dir, cell_anno_file, summary_file, output_file)
+
+- **Function Description:**
+
+This function automatically generates the final bin annotation file to prepare for downstream phylogenetic tree construction by seamlessly aggregating cell annotations and quality control summaries from the executed upstream pipeline modules (MetaSAG_MetaPhlAnAsign and MetaSAG_BinQCAnno).
+
+
+- **Required Parameters:**
+```
+fasta_dir       --      The directory containing the FASTA files used for phylogenetic tree construction.
+
+cell_anno_file  --      The path to the `CellAnno.txt` file generated in the `MetaSAG_MetaPhlAnAsign` step. 
+
+summary_file    --      The path to the `summary.txt` file generated in the `MetaSAG_BinQCAnno` step. 
                         
-snap_aligner    --      Path to the snap_aligner executable.
-                        Default: None
-
-samtools        --      Path to the SAMtools executable.
-                        Default: None
-
-env             --      Conda environment required for running bcftools/snap_aligner.
-                        Default: None
-
-ReadsEnd        --      Type of droplet sequencing reads (single-end or paired-end).
-                        Default: single-end, ReadsEnd='Single'.
-                        For paired-end, set ReadsEnd='Pair'.
-
-min_cells        --     The minimum number of cells remaining after filtering. 
-                        Default: 5.
-
-sort_tool        --     Select the software used for sorting BAM files.
-                        Default:  SAMtools, sort_tool='samtools'.    
-                        For SNAP, set sort_tool='snap'.
-```
-
-
-
-
-- **Results:**
-
-![SNP_Pheatmap](SNP_Pheatmap.png)
-![SNP_Tree](SNP_Tree.png)
-![SNP_Umap_Prep](SNP_Umap_prep.png)
-
-
-
-
-
-
-
-## Func 2：SingleBinSplit(ClusterNum)
-
-- **Function Description:**
-
-Determines the optimal number of clusters for the bin based on visualization results from SingleBinPrepare().
-
-- **Required Parameter:**
-
-ClusterNum      --      Optimal number of clusters for the bin.
-
-- **Results:**
-
-![SNP_Umap](SNP_Umap.png)
-
-
-Eg. StrainCell.txt
-
-| Cluster |     Cell      |
-|:-------:|:-------------:|
-|    0    | Sam1025_10073 |
-|    0    | Sam1025_1115  |
-|    0    | Sam1025_11610 |
-|    1    | Sam1025_11666 |
-|    1    | Sam1025_12999 |
-|    1    | Sam1025_4770  |
-|   ...   |      ...      |
-
-
-
-
-## Func 3：StrainAssem(StrainAssemDir,ReadsEnd)
-
-- **Function Description:**
-
-Assembles sequencing read sequences for different strains of a bacterial species.
-
-- **Required Parameters:**
-```
-StrainAssemDir  --      Assembly result file path for strain sequences.
-
-ReadsEnd        --      Type of droplet sequencing reads (single-end or paired-end).
-```
-
-
-- **Optional Parameters:**
-```
-env             --      Conda environment required for running spades.py.
-                        Default: None
-
-StrainCellsFile --      Path to the cell strain classification file.
-                        Default: None. 
-                        If not specified, the program will automatically inherit and use the file generated by the previous upstream function.
-```
-
-## Func 4：SetupRunDir(fastaDir, fastqDir, cellAnno, ReadsEnd)
-
-- **Function Description:**
-
-This function fully automates the construction of an independent working directory for single-species strain splitting by deeply integrating with data from previous pipeline steps. Specifically, it utilizes the upstream annotation file (CellAnno) to extract all cell information associated with the target species (SpeciesName) within the SingleBin class, automatically generating a dedicated, isolated BinDir working directory under the ResultDir path.
-
-- **Required Parameters:**
-```
-fastaDir        --      The directory containing the FASTA files intended for SNP-based strain splitting.
-
-fastqDir        --      The directory containing the individual FASTQ files for each cell.
-
-cellAnno        --      The path to the `CellAnno.txt` file generated in the upstream `MetaSAG_MetaPhlAnAsign` step. 
-```           
-
-- **Optional Parameters:**
-```
-ReadsEnd        --      Type of droplet sequencing reads (single-end or paired-end).
-                        Default: 'Single'. For paired-end reads, set ReadsEnd='Pair'.
+output_file     --      The full output path and filename designated for the resulting `BinAnno.txt` data table. 
 ```
 
 
 ```bash
 # Execution Command Examples
 
-from MetaSAG import SNPStrain as snp
+from MetaSAG import Tree as tree
+
+# Generate BinAnno file
+
+FastaDir = Target_Path + 'Bin_QC/Pass/'
+
+CellAnno = Target_Path + 'MetaPhlAnAsign/MPAsign/CellAnno.txt'
+
+Summary = Target_Path + 'Bin_QC/summary.txt'
+
+BinAnno = Target_Path + 'Tree/BinAnno.txt'
+
+tree.GenerateBinAnno(FastaDir, CellAnno, Summary, BinAnno)
 
 
-# Bin preprocessing
 
-# Ensure both FASTA files and cell-specific FASTQ files are located within the same directory for downstream analysis.
+# Build phylogenetic tree
 
-BinDir = Target_Path + 'SNPStrain/single_fastqa/SGB6796' #1.5Gb
+FastaDir = Target_Path + 'Bin_QC/Pass/' 
 
-ResultDir = Target_Path + "SNPStrain/single_result/SGB6796/"
+TreeTemp = Target_Path + 'Tree/TreeTemp/'
 
-SpeciesName = 'SGB6796'  
-
-SingleBin = snp.SingleBin(BinDir,ResultDir,SpeciesName)
-
-fastaDir = Target_Path + 'Bin_QC/PASS/'
-
-fastqDir = fastqDir = Target_Path + 'CellBarn/'
-
-cellAnno = Target_Path + 'MetaPhlAnAsign/MPAsign/CellAnno.txt'
-
-SingleBin.SetupRunDir( fastaDir , fastqDir , cellAnno , "Pair")
-
-snap_aligner = '/Tools/SNAP/snap-aligner'
-
-bcftools = '/Tools/bcftools/bcftools-1.18/bcftools'
-
-SingleBin.SingleBinPrepare(bcftools=bcftools,snap_aligner=snap_aligner,ReadsEnd='Pair')
-#SingleBinPrepare took 216.9003 seconds to execute.
-
-SingleBin.Strain
-# Query the number of dropped SNPs/cells
-
-SingleBin.DropSNPNum  # 12057
-
-SingleBin.AllSNPNum  #  22728
-
-SingleBin.AllCellNum  #  69
-
-SingleBin.DropCellNum  #  3
+tree.BuildTree(FastaDir,TreeTemp,env='anvio-7.1')
 
 
-# Clustering
-# Determine the number of clusters based on the UMAP plot from SingleBinPrepare()
+# Prepare itol web tree plotting file
 
-SingleBin = snp.SingleBin(BinDir,ResultDir,SpeciesName)
+BinAnno = Target_Path + 'Tree/BinAnno.txt' # Users may either manually create the BinAnno.txt file according to the specifications above or generate it automatically using the GenerateBinAnno function.
 
-SingleBin.SingleBinSplit(2)
-#SingleBinSplit took 1.2961 seconds to execute.
+AnnoResult = Target_Path + 'Tree/AnnoResult'
 
-#Assembling
+tree.itolPlot(BinAnno,AnnoResult)
 
-StrainAssemDir = Target_Path + "SNPStrain/single_result/SGB6796/"
-
-SingleBin.StrainAssem(StrainAssemDir= StrainAssemDir, ReadsEnd='Pair')
-```
-
-
-## Class2：AllBin(FastaDir, FastqDir, CellAnno, ResultDir)
-- **Class Function:**
-
-Clusters cells across all species-level bins into strain-level clusters.
-
-- **Required Parameters:**
-```
-FastaDir        --      Path to the directory containing all bin-assembled genome files.   
-
-FastqDir        --      Path to the directory containing all cell fastq sequencing files.
-
-CellAnno        --      Mapping file between each cell and its corresponding bin.
-
-ResultDir       --      Path to save the bin-clustering results.
-```
-
-## Func 1：AllBinPrepare()
-
-- **Function Description:**
-
-Performs variant calling on cells in all input bins and clusters cells based on SNPs, generating visualization plots.
-
-- **Optional Parameters:**
-```
-
-bcftools        --      Path to the bcftools executable.
-                        Default: None
-
-snap_aligner    --      Path to the snap_aligner executable.
-                        Default: None
-
-samtools        --      Path to the SAMtools executable.
-                        Default: None
-
-env             --      Conda environment required for running bcftools/snap_aligner.
-                        Default: None
-
-ReadsEnd        --      Type of droplet sequencing reads (single-end or paired-end).
-                        Default: single-end, ReadsEnd='Single'.
-                        For paired-end, set ReadsEnd='Pair'.
-
-exclude_clusters--      Specifies groups or bins to be excluded from the analysis (e.g., 'NoSGB'). 
-                        Accepts either a single string or a list of strings.
-                        Default: None.     
-
-min_cells       --      The minimum number of cells remaining after filtering. 
-                        Default: 5.
-
-sort_tool       --      Select the software used for sorting BAM files.
-                        Default:  SAMtools, sort_tool='samtools'.    
-                        For SNAP, set sort_tool='snap'.
 
 ```
 
+## Test Data
 
-Eg. CellAnno.txt
+- [`Step_6_8_TestData`](../Example_data/Step_6_8_TestData)
 
-| Cluster  |     Cell      |
-|:--------:|:-------------:|
-| SGB10068 | Sam1025_10158 |
-| SGB10068 | Sam1025_10251 |
-| SGB10068 | Sam1025_10392 |
-| SGB4577  | Sam1102_7184  |
-| SGB4577  | Sam1102_7261  |
-|   ...    |      ...      |
+This is a new test dataset for Step 6 and Step 8.
 
+The assembled genomes generated by the previous small test dataset are not sufficient to support phylogenetic tree construction or inter-species horizontal gene transfer analysis. Therefore, Step 6 and Step 8 use this independent test dataset to test the corresponding functions.
 
-## Func 2：AllBinSplit()
+The test data include:
 
-- **Function Description:**
-
-Determines the optimal number of clusters for each bin based on visualization results from AllBinPrepare().
-Fill in the appropriate cluster numbers for each bin in the ResultDir/BinClusterAnno.txt file (or modify the AllBin object's BinClusterAnno attribute before running the function).
-
-Eg. ResultDir/BinClusterAnno.txt
-
-|         BinPrepareDir          | SpeciesName | ClusterNum |
-|:------------------------------:|:-----------:|:----------:|
-| ./result/AllBin/SGB10068Result |  SGB10068   |     4      |
-| ./result/AllBin/SGB5111Result  |   SGB5111   |     2      |
-|              ...               |     ...     |    ...     |
-
-
-
-
-## Func 3：AllBinStrainAssem(StrainAssemDir)
-
-- **Function Description:**
-
-Assembles sequencing read sequences for different strains of each bacterial species.
-
-- **Required Parameters:**
+```text
+Step_6_8_TestData/
+├── SGB1814.fasta
+├── SGB1949.fasta
+├── SGB4327.fasta
+├── SGB4768.fasta
+├── SGB4874.fasta
+├── CellAnno.txt
+└── summary.txt
 ```
-StrainAssemDir  --      Assembly result file path for strain sequences. 
+
+## Test Usage
+
+```python
+from MetaSAG import Tree as tree
+
+Target_Path = "Your/Result/Path/"
+TestData = "../Example_data/Step_6_8_TestData/"
+
+FastaDir = TestData
+CellAnno = TestData + "CellAnno.txt"
+Summary = TestData + "summary.txt"
+
+BinAnno = Target_Path + "Tree/BinAnno.txt"
+TreeTemp = Target_Path + "Tree/TreeTemp/"
+AnnoResult = Target_Path + "Tree/AnnoResult/"
+
+tree.GenerateBinAnno(FastaDir, CellAnno, Summary, BinAnno)
+tree.BuildTree(FastaDir, TreeTemp, env="anvio-7.1")
+tree.itolPlot(BinAnno, AnnoResult)
 ```
-- **Optional Parameters:**
+
+## Expected Output
+
+```text
+Target_Path/Tree/
+├── BinAnno.txt                                      # Used by Step 8 HGT analysis
+├── TreeTemp/
+│   ├── FastaAdjust/
+│   ├── DB/
+│   ├── Anno/
+│   ├── external_genomes.txt
+│   ├── concatenated-proteins_Bacteria_71_ribosomal6.fa
+│   └── phylogenomic-tree_Bacteria_71_ribosomal6.txt # Phylogenetic tree file
+└── AnnoResult/
+    ├── Label_Anno.txt
+    └── Bar_Anno.txt
 ```
-env             --      Conda environment required for running spades.py.
-                        Default: None
 
-ReadsEnd        --      Type of droplet sequencing reads (single-end or paired-end).
-                        Default: single-end, ReadsEnd='Single'.
-                        For paired-end, set ReadsEnd='Pair'.
-```
-Eg.Strain_Analysis_Summary.csv
+The following files are used in the next step:
 
-| SpeciesName |  Status  | Passed_Cells |
-|:-----------:|:--------:|:------------:|
-|   SGB4584   | SUCCESS  |      69      |
-|   SGB6754   | SUCCESS  |      25      |
-|   SGB4540   | SUCCESS  |      30      |
-|   SGB4940   |  FAILED  |      0       |
-|   SGB4577   | SUCCESS  |      16      |
-|   SGB4834   | No Fasta |      0       |
+```text
+# Tree annotation file used by Step 8
+Target_Path/Tree/BinAnno.txt
 
-```bash
-# Execution Command Examples
-
-from MetaSAG import SNPStrain as snp
-
-
-# Bin preprocessing for all bins
-
-fastaDir = Target_Path  + 'Bin_QC/Pass/'
-
-fastqDir = Target_Path + 'Barn/CellTrim_pair/' # Trimmed single-cell files
-
-cellAnno = Target_Path + 'SNPStrain/All/SNPCluster.txt'
-
-resultDir = Target_Path + 'SNPStrain/All/'
-
-AllBin=snp.AllBin(fastaDir,fastqDir,cellAnno,resultDir)
-
-snap_aligner = 'Tools/SNAP/snap-aligner'
-
-bcftools = 'Tools/bcftools/bcftools-1.18/bcftools'
-
-AllBin.AllBinPrepare(bcftools=bcftools,snap_aligner=snap_aligner,ReadsEnd='Pair',exclude_clusters='NoSGB')
-#AllBinPrepare took 3736.5503 seconds to execute.
-
-# Clustering for all bins
-# Note: Before clustering, fill in the appropriate cluster numbers for each bin in ResultDir/BinClusterAnno.txt based on visualization results.
-
-AllBin = snp.AllBin(fastaDir,fastqDir,cellAnno,resultDir)
-
-AllBin.AllBinSplit()
-#AllBinSplit took 43.4115 seconds to execute
-
-StrainAssemDir = Target_Path + 'SNPStrain/All/Bin/'
-
-AllBin.AllBinStrainAssem(StrainAssemDir = StrainAssemDir , ReadsEnd='Pair')
+# Phylogenetic tree file used with Step 8 HGT annotation files in iTOL
+Target_Path/Tree/TreeTemp/phylogenomic-tree_Bacteria_71_ribosomal6.txt
 ```

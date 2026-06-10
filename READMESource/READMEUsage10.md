@@ -1,6 +1,5 @@
-
-
-# SGB Strain Evolution Analysis Function
+# MetaSAG Usage 
+## Step 10. SGB Strain Evolution Analysis Function
 
 A simple R script for analyzing bacterial strain evolution from multiple SGB folders.
 
@@ -81,3 +80,57 @@ Minimal command to get started:
 
 strain_analysis_multi_sgb.R -i /your/data/folder
 ```
+## Test Data
+
+- [`Step_10_TestData`](../Example_data/Step_10_TestData)
+
+The Step 1–5 small test dataset is mainly used to verify that the workflow can run and is not sufficient to support reliable strain evolution analysis. Therefore, Step 10 uses this independent test dataset to test SGB strain evolution analysis.
+
+The test data include multiple SGB result folders. Each folder contains strain assignment information and an SNP matrix for one SGB.
+
+```text
+Step_10_TestData/
+├── SGB1814_Result/
+│   ├── StrainCells.txt
+│   └── SGB1814_SNPpd.txt
+├── SGB4269_Result/
+│   ├── StrainCells.txt
+│   └── SGB4269_SNPpd.txt
+├── SGB4563_Result/
+│   ├── StrainCells.txt
+│   └── SGB4563_SNPpd.txt
+└── ...
+```
+
+## Test Usage
+
+```bash
+strain_analysis_multi_sgb.R \
+  -i ../Example_data/Step_10_TestData \
+  -o Your/Result/Path/Strain_Analysis_Results
+```
+
+To skip SGB folders that have already been analyzed:
+
+```bash
+strain_analysis_multi_sgb.R \
+  -i ../Example_data/Step_10_TestData \
+  -o Your/Result/Path/Strain_Analysis_Results \
+  --skip-existing
+```
+
+## Expected Output
+
+```text
+Your/Result/Path/Strain_Analysis_Results/
+├── SGB1814/
+│   ├── basic_statistics.tsv
+│   ├── phylogeny_tree.png
+│   ├── divergence_time.tsv
+│   └── SGB1814_analysis_report.md
+├── SGB4269/
+├── SGB4563/
+└── batch_summary.tsv
+```
+
+The exact set of SGB output folders depends on the valid `SGB*_Result` folders found in the input directory.

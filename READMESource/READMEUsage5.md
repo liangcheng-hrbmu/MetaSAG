@@ -1,129 +1,388 @@
 # MetaSAG Usage 
-## Step 5. Build phylogenetic tree.
+## Step 5. Quality control and integration annotation of assembled genome.
 
+## Part 1 Basic Quality Control
 
-## Func 1：BuildTree(FastaDir,TreeTemp,env=None)
+## Func 1：FastaQC1(FastaDir,FastaOut)
 
 - **Function Description:**
-
-Calls ANVI'O to build a phylogenetic tree for genome files in the input directory.
-
+Removes overly short contigs from all FASTA files in the specified directory.
 
 - **Required Parameters:**
 ```
-FastaDir        --      Path to input genome files (must be an absolute path).
+FastaDir        --      Path to the directory containing uncorrected FASTA files.
+                        Files must end with .fasta.
 
-TreeTemp        --      Path to save the tree file results.
+FastaOut        --      Path to save the directory of corrected FASTA files.
+```````
+- **Optional Parameters:**
+```
+minlen          --      Minimum contig length threshold in FASTA files.
+                        Default: 500 bp.
+```
+
+
+## Func 2：FastaQC2(FastaDir,FastaOut,CheckmFile)
+
+- **Function Description:**
+Classifies genome FASTA files into "Pass", "Bandage" (subdivided into "low" and "medium" for manual correction), or "Abandon" based on CheckM results. 
+It introduces a multi-routing logic: specific high-quality drafts (e.g., completeness > 90% and 5% < contamination < 10%) are simultaneously output to "Pass" for automated pipeline progression and "Bandage/medium" for optional manual refinement. Additionally, it supports copying corresponding FASTG assembly graphs into the Bandage directories if an input directory is provided.
+
+- **Required Parameters:**
+```
+FastaDir        --      Path to the directory containing corrected FASTA files.
+
+FastaOut        --      Path to save the classification results of FASTA files.
+
+CheckmFile      --      CheckM result table for the corrected FASTA files.
+```````
+- **Optional Parameters:**
+```
+FastgDir        --      If a fastg folder is provided, copy corresponding fastg files to the Bandage folder; 
+                        if not, only place corresponding FASTA files in the Bandage folder.
+                        Default: None.
+```
+
+```bash
+#Execution Command Examples
+
+from MetaSAG import BinQCAnno as bqa
+
+
+# Remove contigs <500bp in length
+
+FastaDir = Target_Path + 'MetaPhlAnAsign/MPAsign/BinFasta/'
+
+FastaOut = Target_Path + "Bin_QC/BinFastaQC1/"
+
+bqa.FastaQC1(FastaDir,FastaOut)
+
+
+
+# Evaluate genome assembly quality based on CheckM files and determine which assemblies need further correction
+
+FastaDir = Target_Path + 'Bin_QC/BinFastaQC1/'
+
+FastgDir = Target_Path + 'MetaPhlAnAsign/MPAsign/BinFastg/'
+
+CheckmFile = Target_Path + 'Bin_QC/BinFastaQC1/check/qa_results'
+
+FastaOut = Target_Path + 'Bin_QC/BinFastaQC2/'
+
+bqa.FastaQC2(FastaDir,FastaOut,CheckmFile,FastgDir=FastgDir) 
+```
+
+
+## Part 2 [Optional Branch] SAG-gel sequencing-specific filtering
+
+## Func 3：RebinMetaBAT2(InputDir, OutputDir)
+
+- **Function Description:**
+Re-bin high-contamination genome files using MetaBAT2.
+
+- **Required Parameters:**
+```
+InputDir    --    Input directory path of FASTA files to be filtered.
+
+OutputDir   --    Centralized storage path for binned FASTA files.
 ```
 
 
 - **Optional Parameters:**
 ```
-env         --      Conda environment for running ANVI'O.
-                    Default: None.
+MetaBat2_env  --      The name of the conda environment specified for running MetaBAT2.
+                      Default Value: None.
+
+threads       --      [MetaBAT2 parameter] Number of threads to use for binning.
+                      Default Value: 16.
+
+min_contig    --      [MetaBAT2 parameter] Minimum contig length required for binning, including Tetranucleotide Frequency (TNF) calculation.
+                      Default Value: 1500.
+
+max_edges     --      [MetaBAT2 parameter] Maximum number of edges allowed in the clustering graph.
+                      Default Value: 500.
+
+min_cls_size  --      [MetaBAT2 parameter] Minimum size of a bin as the output (in base pairs).
+                      Default Value: 100000.
 ```
-
-- **Result:**
-
-phylogenomic-tree_Bacteria_71_ribosomal6.txt
-
-
-
-
-## Func 2：itolPlot(BinAnno,Anno)
+## Func 4：FilterMetaBAT2(InputDir, OutputDir, CheckmFile, Level)
 
 - **Function Description:**
-
-Organizes provided genome information into a data format suitable for plotting phylogenetic trees on the itol web interface.
-
+Score genomes produced by RebinMetaBAT2 using the formula: Completeness - 5 * Contamination, and extract the highest-scoring file. Based on the resulting quality, perform routing classification: medium-to-high-quality genomes are directly stored in the Pass/ directory for downstream analysis; genomes with strain heterogeneity ≤ 40 and in a borderline quality state (completeness > 90%, or > 50% but not meeting higher-tier criteria) are considered optimizable and are assigned to the To_Improve/ directory for further refinement; genomes with strain heterogeneity > 40 or those whose quality degrades after filtering are deemed unsuitable for this pipeline and are routed to To_Improve/Abandon for discard.
 
 - **Required Parameters:**
 ```
-BinAnno     --      Information about genome files.
+InputDir    --      The input directory containing all genome bins generated by RebinMetaBAT2. 
 
-Anno        --      Path to save the itol plotting format results file.
+OutputDir   --      The output directory for categorizing and storing the highest-scoring genome files selected from each bin.
+
+CheckmFile  --      The file path to the CheckM 'qa_results' generated by the user evaluating all newly binned genomes.
+
+Level       --      The original quality level of the genome prior to RebinMetaBAT2 processing. 
+                    Acceptable values: 'low' or 'medium'.
 ```
 
-Eg. BinAnno (without phylum-level color mapping)
 
-|   Bin   | CellNum |     Phylum     |
-|:-------:|:-------:|:--------------:|
-| genome1 |   91    |   Firmicutes   |
-| genome2 |   44    | Actinobacteria |
-| genome3 |   18    | Actinobacteria |
-|   ...   |   ...   |      ...       |
-
-
-
-Eg. BinAnno (with phylum-level color mapping)
-
-|   Bin   | CellNum |     Phylum     |  Color  |
-|:-------:|:-------:|:--------------:|:-------:|
-| genome1 |   91    |   Firmicutes   | #705e78 |
-| genome2 |   44    | Actinobacteria | #fea443 |
-| genome3 |   18    | Actinobacteria | #fea443 |
-|   ...   |   ...   |      ...       |   ...   |
-
-- **Result:**
-
-![Tree](Tree.png)
-
-## Func 3：GenerateBinAnno(fasta_dir, cell_anno_file, summary_file, output_file)
-
-- **Function Description:**
-
-This function automatically generates the final bin annotation file to prepare for downstream phylogenetic tree construction by seamlessly aggregating cell annotations and quality control summaries from the executed upstream pipeline modules (MetaSAG_MetaPhlAnAsign and MetaSAG_BinQCAnno).
-
-
-- **Required Parameters:**
+- **Optional Parameters:**
 ```
-fasta_dir       --      The directory containing the FASTA files used for phylogenetic tree construction.
-
-cell_anno_file  --      The path to the `CellAnno.txt` file generated in the `MetaSAG_MetaPhlAnAsign` step. 
-
-summary_file    --      The path to the `summary.txt` file generated in the `MetaSAG_BinQCAnno` step. 
-                        
-output_file     --      The full output path and filename designated for the resulting `BinAnno.txt` data table. 
+max_het     --      The maximum strain heterogeneity threshold used to determine if the genome qualifies for further filtering and refinement.
+                    Default Value: 40.
 ```
 
 
 ```bash
-# Execution Command Examples
+#Execution Command Examples
 
-from MetaSAG import Tree as tree
+from MetaSAG import BinQCAnno as bqa
 
-# Generate BinAnno file
+Low_InputDir = Target_Path + 'Bin_QC/BinFastaQC2/Bandage/low/'
 
-FastaDir = Target_Path + 'Bin_QC/Pass/'
+Low_OutputDir = Target_Path + 'Bin_QC/RefineBandageBins/all_Metabat2_bin/low/'
 
-CellAnno = Target_Path + 'MetaPhlAnAsign/MPAsign/CellAnno.txt'
-
-Summary = Target_Path + 'Bin_QC/summary.txt'
-
-BinAnno = Target_Path + 'Tree/BinAnno.txt'
-
-tree.GenerateBinAnno(FastaDir, CellAnno, Summary, BinAnno)
+bqa.RebinMetaBAT2(Low_InputDir, Low_OutputDir)
 
 
 
-# Build phylogenetic tree
+Low_InputDir = Target_Path + 'Bin_QC/RefineBandageBins/all_Metabat2_bin/low/'
 
-FastaDir = Target_Path + 'Bin_QC/Pass/' #292Mb
+Low_CheckmFile = Target_Path + 'Bin_QC/RefineBandageBins/all_Metabat2_bin/low/check/qa_results'
 
-TreeTemp = Target_Path + 'Tree/TreeTemp/'
+OutputDir = Target_Path + 'Bin_QC/RefineBandageBins/Filter_Metabat2_bin/'
 
-tree.BuildTree(FastaDir,TreeTemp,env='anvio-7.1')
-#BuildTree took 8312.0662 seconds to execute.
-
-
-
-# Prepare itol web tree plotting file
-
-BinAnno = Target_Path + 'Tree/BinAnno.txt' # Users may either manually create the BinAnno.txt file according to the specifications above or generate it automatically using the GenerateBinAnno function.
-
-AnnoResult = Target_Path + 'Tree/AnnoResult'
-
-tree.itolPlot(BinAnno,AnnoResult)
-
-
+bqa.FilterMetaBAT2(Low_InputDir, OutputDir, Low_CheckmFile, 'low') 
 ```
+
+
+## Part 3 Integration & Annotation
+
+## Func 5：MergeFasta(dir1, dir2, output_dir)
+
+- **Function Description:**
+
+This function aggregates genome FASTA files generated from quality control and filtering steps into a single directory for downstream analysis, but it is strictly designed for the SAG-gel sequencing-specific filtering workflow to merge initial QC results with refined MetaBAT2 results. During the merge, if file name conflicts occur, the files in the high-priority directory (dir2) will take precedence and overwrite those in the low-priority directory (dir1).
+
+- **Required Parameters:**
+```
+dir1        --      The low-priority directory containing genome files that passed the initial quality control.
+
+dir2        --      The high-priority directory containing genome files with improved quality after filtering.
+
+output_dir  --      The destination directory to store the final aggregated high-quality genome files.
+```
+
+
+## Func 6：Summary(FastaSGB,CheckmFile,GTDBFile)
+
+- **Function Description:**
+
+Integrates results from MetaPhlAnN4 classification files (FastaSGB), CheckM quality inspection files (CheckmFile), and GTDB-TK annotation files (GTDBFile) for assembled genomes.
+
+- **Required Parameters:**
+```
+FastaSGB        --      Path to the MetaPhlAnN4 annotation classification file for assembled genomes.
+
+CheckmFile      --      CheckM quality inspection file for assembled genomes.
+
+GTDBFile        --      GTDB-TK annotation file for assembled genomes.
+```
+
+
+- **Optional Parameters:**
+```
+outputSummary   --      Path to save the integrated annotation results file.
+                        Default: None (results are returned as a DataFrame object).
+```
+
+
+
+Eg. FastaSGB (first column: bin genome file name without .fasta suffix; second column: MetaPhlAn4 classification SGB ID)
+
+|   Bin   |   SGB    |
+|:-------:|:--------:|
+| genome1 | SGB1024  |
+| genome2 | SGB28348 |
+| genome3 | SGB4348  |
+|   ...   |   ...    |
+
+
+- **Result:**
+
+Eg. Summary.txt
+
+|   Bin   |   SGB    |                                                         SGBName                                                          | Completeness | Contamination | closest_reference |                                                     closest_taxonomy                                                     |closest_ani|ContamFlag|CompleteFlag|QC|
+|:-------:|:--------:|:------------------------------------------------------------------------------------------------------------------------:|:------------:|:-------------:|:-----------------:|:------------------------------------------------------------------------------------------------------------------------:|:---:|:---:|:---:|:---:|
+| genome1 | SGB1024  |              k__Bacteria\|p__Bacteroidetes\|c__CFGB343\|o__OFGB343\|f__FGB343\|g__GGB781\|s__GGB781_SGB1024              |    96.02     |     13.66     |  GCA_000434395.1  |                d__Bacteria;p__Firmicutes;c__Bacilli;o__RFN20;f__CAG-288;g__CAG-568;s__CAG-568 sp000434395                |97.29|fail|pass|Low|
+| genome2 | SGB28348 | k__Bacteria\|p__Bacteroidetes\|c__Cytophagia\|o__Cytophagales\|f__Cytophagaceae\|g__Aquirufa\|s__Aquirufa_antheringensis |    86.21     |     71.32     |        no         |                                                            no                                                            |no|fail|pass|Low|
+| genome3 | SGB4348  |            k__Bacteria\|p__Firmicutes\|c__CFGB4806\|o__OFGB4806\|f__FGB4806\|g__GGB51647\|s__GGB51647_SGB4348            |    98.66     |     7.31      |  GCA_000432435.1  | d__Bacteria;p__Firmicutes_A;c__Clostridia;o__Oscillospirales;f__Acutalibacteraceae;g__Fimenecus;s__Fimenecus sp000432435 |98.92|pass|pass|Medium|
+|   ...   |   ...    |                                                           ...                                                            |     ...      |      ...      |        ...        |                                                           ...                                                            |...|...|...|...|
+
+
+
+
+```bash
+#Execution Command Examples
+
+from MetaSAG import BinQCAnno as bqa
+
+BinFastaQC2 = Target_Path + 'Bin_QC/BinFastaQC2/Pass/'
+
+RefineBandageBins = Target_Path + 'Bin_QC/RefineBandageBins/Filter_Metabat2_bin/Pass/'
+
+PASS = Target_Path + 'Bin_QC/PASS/'
+
+bqa.MergeFasta(BinFastaQC2, RefineBandageBins, PASS)
+
+
+
+# Integrate MetaPhlAnN4 annotation classification, CheckM quality assessment, and GTDBTK annotation classification results
+
+FastaSGB = Target_Path + 'Bin_QC/BinFastaQC2/Pass/FastaSGB.txt'
+
+CheckmFile = Target_Path + 'Bin_QC/BinFastaQC1/check/qa_results'
+
+GTDBFile = Target_Path + 'Bin_QC/BinFastaQC2/Pass/gtdb_out/gtdbtk.bac120.summary.tsv'
+
+outputSummary = Target_Path + 'Bin_QC/summary.txt'
+
+summary=bqa.Summary(FastaSGB,CheckmFile,GTDBFile,outputSummary)
+```
+
+## Test Data
+
+This step uses the output generated by the Step 3 test.
+
+Before running this step, run the Step 3 test with the same `Target_Path`.
+
+Required input from previous steps:
+
+```text
+Target_Path/MetaPhlAnAsign/MPAsign/
+├── BinFasta/                       # Assembled genome FASTA files from Step 3
+└── BinFastg/                       # FASTG assembly graph files from Step 3
+```
+
+`Summary()` only summarizes FASTA files retained in the `BinFastaQC2/Pass/` folder. The `FastaSGB`, CheckM, and GTDB-TK result tables used by `Summary()` should correspond to those passed genomes.
+
+## Note on Test Data Limitation
+
+The Step 1–5 test dataset is intentionally small and is mainly used to verify the early workflow steps.
+
+Because the Step 3 test usually cannot assemble enough high-quality cells from this small dataset, Step 5 is difficult to fully test with the Step 1–5 test output. The `BinFasta/` folder may be empty or contain only very few assembled genomes, and `FastaQC2()` may not retain genomes in the `BinFastaQC2/Pass/` folder. In that case, downstream summary generation may produce an empty or non-informative result.
+
+`Summary()` is meaningful only for genomes retained in:
+
+```text
+Target_Path/Bin_QC/BinFastaQC2/Pass/
+```
+
+Therefore, for real biological interpretation, users should run this step on their own assembled genomes with sufficient quality. For downstream phylogenetic tree construction, HGT analysis, and strain splitting analysis, this tutorial provides independent datasets:
+
+- [`Step_6_8_TestData`](../Example_data/Step_6_8_TestData): for phylogenetic tree construction and HGT analysis
+- [`Step_7_TestData`](../Example_data/Step_7_TestData): for strain splitting analysis
+- [`Step_10_TestData`](../Example_data/Step_10_TestData): for SGB strain evolution analysis
+
+## External Tools Required
+
+Users need to run CheckM and GTDB-TK separately before executing the corresponding MetaSAG functions.
+
+`FastaQC2()` requires a CheckM `qa_results` file. Example CheckM commands:
+
+```bash
+#!/bin/bash
+
+BASE="Your/Result/Path/Bin_QC/BinFastaQC1"
+
+# 1. Run CheckM lineage workflow.
+checkm lineage_wf -t 32 -x fasta "$BASE/" "$BASE/check"
+
+# 2. Export the QA result table.
+checkm qa -o 2 --tab_table -f "$BASE/check/qa_results" "$BASE/check/lineage.ms" "$BASE/check"
+```
+
+The required CheckM file for `FastaQC2()` is:
+
+```text
+Target_Path/Bin_QC/BinFastaQC1/check/qa_results
+```
+
+`Summary()` requires both the CheckM `qa_results` file and the GTDB-TK summary file. Example GTDB-TK commands:
+
+```bash
+#!/bin/bash
+
+source /data_alluser/miniconda3/etc/profile.d/conda.sh
+conda activate gtdbtk-2.1.1
+export GTDBTK_DATA_PATH=/data_alluser/singleCellMicrobiome/dmy_test/microbiome_Refseq/GTDBTK-2.1.1_DB
+
+BASE="Your/Result/Path/Bin_QC/BinFastaQC2/Pass"
+
+gtdbtk classify_wf \
+    --genome_dir "$BASE/" \
+    --out_dir "$BASE/gtdb_out/" \
+    --extension fasta \
+    --cpus 80 \
+    --pplacer_cpus 40 \
+    --prefix gtdbtk \
+    --force
+```
+
+The required GTDB-TK file for `Summary()` is:
+
+```text
+Target_Path/Bin_QC/BinFastaQC2/Pass/gtdb_out/gtdbtk.bac120.summary.tsv
+```
+
+## Usage Template
+
+### Part 1 Basic Quality Control
+
+```python
+from MetaSAG import BinQCAnno as bqa
+
+Target_Path = "Your/Result/Path/"
+
+FastaDir = Target_Path + "MetaPhlAnAsign/MPAsign/BinFasta/"
+FastaOut = Target_Path + "Bin_QC/BinFastaQC1/"
+
+bqa.FastaQC1(FastaDir, FastaOut)
+
+FastaDir = Target_Path + "Bin_QC/BinFastaQC1/"
+FastgDir = Target_Path + "MetaPhlAnAsign/MPAsign/BinFastg/"
+CheckmFile = Target_Path + "Bin_QC/BinFastaQC1/check/qa_results"
+FastaOut = Target_Path + "Bin_QC/BinFastaQC2/"
+
+bqa.FastaQC2(FastaDir, FastaOut, CheckmFile, FastgDir=FastgDir)
+```
+
+### Part 3 Integration & Annotation
+
+```python
+from MetaSAG import BinQCAnno as bqa
+
+Target_Path = "Your/Result/Path/"
+
+FastaSGB = Target_Path + "Bin_QC/BinFastaQC2/Pass/FastaSGB.txt"
+CheckmFile = Target_Path + "Bin_QC/BinFastaQC1/check/qa_results"
+GTDBFile = Target_Path + "Bin_QC/BinFastaQC2/Pass/gtdb_out/gtdbtk.bac120.summary.tsv"
+outputSummary = Target_Path + "Bin_QC/summary.txt"
+
+summary = bqa.Summary(FastaSGB, CheckmFile, GTDBFile, outputSummary)
+```
+
+## Expected Output
+
+If sufficient assembled genomes and annotation files are available, this step may generate:
+
+```text
+Target_Path/Bin_QC/
+├── BinFastaQC1/
+│   └── *.fasta
+├── BinFastaQC2/
+│   ├── Pass/                         # May be empty for the small Step 1–5 test dataset
+│   ├── Abandon/
+│   └── Bandage/
+│       ├── low/
+│       └── medium/
+└── summary.txt                       # Generated only when valid passed genomes and annotation files are available
+```
+

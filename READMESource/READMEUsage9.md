@@ -1,117 +1,212 @@
 # MetaSAG Usage 
-## Step 9. Droplet clustering of potentially unknown species
+## Step 9. HUMAnN Path.
 
-## Func 1：FilterUnassignedCells(AnnotationFile, inputFastqDir, OutputDir)
-- **Function Description:**
+## Class：HP(FastqDir,ResultDir)
+- **Class Function:**
 
-Automatically selects droplets that potentially belong to unknown species based on upstream annotation files and generates independent working directories for their aggregation.
-
-- **Required Parameters:**
-```
-AnnotationFile  --      The path to the `CellAnno.txt` file generated in the upstream `MetaSAG_MetaPhlAnAsign` step. 
-
-inputFastq      --      The directory containing the individual FASTQ files for each cell.
-
-outputDir       --      Path to the output directory.
-```
-
-
-## Func 2：ClusterSAG(inputFastq,outputDir)
-- **Function Description:**
-
-Performs clustering (first round) on selected potentially unknown species.
+Classifies all sequencing reads and annotates biological pathways using HUMAnN.
 
 - **Required Parameters:**
 ```
 
-inputFastq      --      Path to the fastq files directory of potentially unknown species droplets.
+FastqDir        --      Path to the input FASTQ data.
+                        Accepts either the absolute path of a single FASTQ file or a directory containing all target files for batch analysis.
 
-outputDir       --      Path to save the clustering results.
+ResultDir       --      Path to save the results.
 
 ```
+
+## Func 1：Diamond()
+
+- **Function Description:**
+
+Perform Diamond alignment on the FASTQ files under the FastqDir directory.
+
 
 - **Optional Parameters:**
 ```
-ReadsEnd        --      Type of droplet sequencing files (single-end or paired-end).
-                        Default: single-end, ReadsEnd='Single'.
-                        For paired-end, set ReadsEnd='Pair'.
-                        
-SpadesEnv       --      Conda environment required for running Spades.py.
+DiamondDB       --      Path to the Diamond reference database.
                         Default: None
                         
-SourmashEnv     --      Conda environment required for running Sourmash.
-                        Default: None            
+Diamondenv      --      Conda environment required for running Diamond.
+                        Default: None
 
-ClusterThreshold--      The cut-off threshold used for forming flat clusters.
-                        Default: 0.95.  
-
-ClusterCriterion--      The criterion used to determine cluster formation.
-                        Available options are 'distance' and 'inconsistent'.
-                        Default: 'distance'.     
 ```
 
 
 
-## Func 3：ClusterBin(OldRoundFold,NewRoundFold)
+## Func 2：Uniref2Matrix()
 
 - **Function Description:**
 
-Performs an additional round of clustering based on previous clustering results as needed.
+Generates a read count matrix of corresponding Uniref segments in each cell based on Diamond alignment results.
+
+
+- **Optional Parameters:**
+
+```
+
+MinUnirefNum        --      Minimum count threshold for annotated Uniref reads in a cell.
+                            Default: 5
+    
+MinCellNum          --      Minimum count threshold for the number of cells where Uniref-mapped reads appear.
+                            Default: 5
+
+```
+
+
+
+## Func 3：SeuratCluster()
+
+- **Function Description:**
+
+Inputs the Cell-Uniref count matrix from Uniref2Matrix to cluster cells using Seurat, generating cell clusters related to Uniref counts.
+
+
+![Seurat_Pheatmap](Seurat_Pheatmap.png)
+![Seurat_Umap](Seurat_Umap.png)
+
+
+
+## Func 4：HUMAnNPath(CellAnno, Group)
+
+- **Function Description:**
+
+Combines cell grouping information from CellAnno and Group to annotate biological pathways for each cell group using HUMAnN based on their Uniref annotations.
 
 
 - **Required Parameters:**
-```
-
-OldRoundFold    --      Root path of the previous clustering results (input data for the function).
-
-outputDir       --      Path to save the results of the additional clustering.
 
 ```
+CellAnno        --      Path to the cell grouping information file.
+
+Group           --      Name of the grouping column in CellAnno.
+```
+
 
 - **Optional Parameters:**
 ```
-ReadsEnd        --      Type of droplet sequencing files (single-end or paired-end).
-                        Default: single-end, ReadsEnd='Single'.
-                        For paired-end, set ReadsEnd='Pair'.
-                        
-SpadesEnv       --      Conda environment required for running Spades.py.
-                        Default: None
-                        
-SourmashEnv     --      Conda environment required for running Sourmash.
+HUMAnNenv       --      Conda environment required for running HUMAnN.
                         Default: None
 
-ClusterThreshold--      The cut-off threshold used for forming flat clusters.
-                        Default: 0.95.  
-
-ClusterCriterion--      The criterion used to determine cluster formation.
-                        Available options are 'distance' and 'inconsistent'.
-                        Default: 'distance'.                      
+ExcludeGroups   --      Specifies groups or bins to be excluded from the analysis (e.g., 'NoSGB'). 
+                        Accepts either a single string or a list of strings.
+                        Default: None.    
 ```
+
+
+Eg. CellAnno (Target_Path/HUMAnNPath/SeuratResult/KnownSGBCell_ClusterCell.txt)
+
+| Cluster |     Cell      |
+|:-------:|:-------------:|
+|    1    | Sam1025_10012 |
+|    1    | Sam1025_10168 |
+|    2    | Sam1025_10335 |
+|    2    | Sam1025_10713 |
+|   ...   |      ...      |
+
+
+- **Result:**
+
+![HUMAnNPath](HUMAnNPath.png)
 
 
 
 ```bash
-
 # Execution Command Examples
 
-from MetaSAG import UnknownSAG as usag
+from MetaSAG import HUMAnNPath as hp
 
-fastqDir = Target_Path + 'CellBarn/'  #846M
+# Create an HP object
 
-cellAnno =  Target_Path + 'MetaPhlAnAsign/MPAsign/CellAnno.txt'
+fastqDir = Target_Path + 'Fastq/'  
 
-outputdir = Target_Path + 'UnknownSAG/'
+resultDir = Target_Path + 'HUMAnNPath/' 
 
-fastq_outputdir = outputdir + "Fastq/"
+obj=hp.HP(fastqDir,resultDir)
 
-usag.FilterUnassignedCells(cellAnno, fastqDir, fastq_outputdir)
+# Perform Diamond alignment on each fastq file
 
-usag.ClusterSAG(fastq_outputdir,outputdir,ReadsEnd = 'Pair',SourmashEnv='sourmash') # Initial clustering of unknown species droplets
+obj.Diamond(DiamondDB = '/Database/uniref/uniref90_201901b_full.dmnd')
 
-Round1Dir=os.path.join(outputdir,'Round1')
+# obj.DiamondDir 
 
-Round2Dir=os.path.join(outputdir,'Round2')
+# 'Target_Path + 'HUMAnNPath/DiamondDir'
+# If the user performs Diamond alignment independently, modify obj.DiamondDir to specify the directory containing Diamond alignment results for subsequent analysis.
 
-usag.ClusterBin(Round1Dir,Round2Dir,ReadsEnd = 'Pair',SourmashEnv='sourmash') # Re-clustering of unknown species droplet bins based on initial results
+# obj.DiamondDir = Target_Path + 'HUMAnNPath/Diamond'
 
+obj.Uniref2Matrix()
+
+obj.SeuratCluster()
+
+cellAnno = Target_Path + 'HUMAnNPath/SeuratResult/KnownSGBCell_ClusterCell.txt'
+
+obj.HUMAnNPath(cellAnno,'Cluster',HUMAnNenv='humann')
+```
+
+## Test Data
+
+This step uses the output generated by the Step 1 paired-end test.
+
+Before running this step, run the Step 1 test with the same `Target_Path`.
+
+Required input from Step 1:
+
+```text
+Target_Path/Barn/Trim/
+└── Test_R1.fastq
+```
+
+Required input from Step 3:
+
+```text
+Target_Path/MetaPhlAnAsign/MPAsign/
+└── CellAnno.txt
+```
+
+## Test Usage
+
+```python
+from MetaSAG import HUMAnNPath as hp
+
+Target_Path = "Your/Result/Path/"
+
+fastqDir = Target_Path + "Barn/Trim/Test_R1.fastq"
+resultDir = Target_Path + "HUMAnNPath/"
+
+obj = hp.HP(fastqDir, resultDir)
+
+obj.Diamond(
+    DiamondDB="/Database/uniref/uniref90_201901b_full.dmnd",
+    Diamondenv="diamond"
+)
+
+obj.Uniref2Matrix()
+obj.SeuratCluster()
+
+cellAnno = Target_Path + "MetaPhlAnAsign/MPAsign/CellAnno.txt"
+
+obj.HUMAnNPath(cellAnno, "Cluster", HUMAnNenv="humann")
+```
+
+## Expected Output
+
+```text
+Target_Path/HUMAnNPath/
+├── DiamondDir/
+│   └── Test_R1_uniref
+├── MatrixDir/
+│   ├── Test_R1_CellUnirefCount.txt
+│   ├── AllSGBCellUnirefCount.txt
+│   └── AllSGB_matrix                       # Core Cell-UniRef matrix used by Seurat
+├── SeuratResult/
+│   ├── KnownSGBCell_ClusterCell.txt
+│   ├── Seurat_Umap.pdf                     # Visualization: Seurat UMAP plot
+│   └── Seurat_Pheatmap.pdf                 # Visualization: Seurat marker heatmap
+└── HUMAnNResult/
+    ├── UnirefForHUMAnN/
+    ├── HUMAnNPathForGroup/
+    │   └── PathCovCluster.txt              # Core pathway coverage table by group
+    └── HeatMapPlot/                        # Visualization: HUMAnN pathway heatmap
 ```

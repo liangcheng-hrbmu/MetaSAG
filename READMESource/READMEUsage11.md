@@ -1,7 +1,8 @@
-# MetaK-Lytic
+# MetaSAG Usage 
+## Step 11. MetaK-Lytic
+
 This is an algorithm for predicting the lysis ability of bacteriophages based on 31-mer sequence data
 
-# Usage
 ## 1. art-illumina 
 
 Simulate the sequencing results of the second-generation sequencing in this way, just run
@@ -42,8 +43,8 @@ Download it, and then run `phage_predictor.py`
 
 
 ## Pre-trained Model
-- [`final_model.h5`](final_model.h5)
+- [`final_model.h5`](../Example_data/final_model.h5)
 
 ## Example Files
-1. [`example_Lytic.npy`](example_Lytic.npy)  
-2. [`example_temperate_feature.npy`](example_temperate_feature.npy)
+1. [`example_Lytic.npy`](../Example_data/example_Lytic.npy)  
+2. [`example_temperate_feature.npy`](../Example_data/example_temperate_feature.npy)

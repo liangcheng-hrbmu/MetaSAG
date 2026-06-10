@@ -1,4 +1,5 @@
-# Step 3. MetaPhlAn4 annotates the reads and classifies droplets
+# MetaSAG Usage
+## Step 3. MetaPhlAn4 annotates the reads and classifies droplets
 
 ## Func：MPAnno(inputFastq, MPOut, SamName)
 - **Function Description:**
@@ -27,21 +28,22 @@ DB      --      MetaPhlAn4 Reference Database Path.
 
 ```
 
-```bash
-#Execution Command Examples
+```python
+# Execution Command Examples
 
 from MetaSAG import MetaPhlAnAsign as mpa
 
-#Samplename.fastq 61Mb
-inputFastq = Target_Path + 'Barn/Summary/Samplename.fastq' # Consolidated file of all trimmed cell sequences belonging to the same sample
+SampleName = "Samplename"
+Target_Path = "Your/Result/Path/"
 
-MPOut = Target_Path + 'MetaPhlAnAsign/annotation_file/'
+inputFastq = [
+    Target_Path + "Cell_Filter/Filtered_Fastq/" + SampleName + "_R1.fastq",
+    Target_Path + "Cell_Filter/Filtered_Fastq/" + SampleName + "_R2.fastq"
+]
 
-SamName = 'Samplename' # The unique identifier or filename of the sample
+MPOut = Target_Path + "MetaPhlAnAsign/annotation_file/"
 
-mpa.MPAnno(inputFastq,MPOut,SamName,env='metaphlan4.1',DB='/Database/MetaPhIAn4_1/DB_Jun23/')
-# MPAnno took 170.1611 seconds to execute.
-
+mpa.MPAnno(inputFastq, MPOut, SampleName, env="metaphlan4.1", DB="/Database/MetaPhIAn4_1/DB_Jun23/")
 ```
 ## Class：MPBowtie(inputBowtie,outputDir)
 - **Class Function:**
@@ -78,9 +80,9 @@ Eg. Cell_SGB_Count.txt [SGB ID]
 |      ...      |   ...    |  ...  |
 
 
-Eg. Cell_Erro_Count.txt [Non-SGB ID]
+Eg. Cell_Other_Count.txt [Non-SGB ID]
 
-|    Cell     |                   Erro                   | Count |
+|    Cell     |                   Other                   | Count |
 |:-----------:|:----------------------------------------:|:-----:|
 | Cell1000073 | VDB\|002F-00A5-0-0002\|M1102-c76-c0-c51  |   1   |
 | Cell1001329 | VDB\|0018-0003-0-0016\|M1102-c72-c0-c223 |   2   |
@@ -277,101 +279,145 @@ ReadsEnd    --      Specifies whether the input droplet sequencing files are sin
 
 
 
-```bash
-#Execution Command Examples
+```python
+# Execution Command Examples
 
 from MetaSAG import MetaPhlAnAsign as mpa
-
-#MetaPhlAnN4 annotation
-
-inputFastq = Target_Path + 'Barn/Summary/Samplename.fastq' # Consolidated file of all trimmed cell sequences belonging to the same sample
-
-output = Target_Path + 'MetaPhlAnAsign/annotation_file/'
-
-Sam = 'Samplename' # The unique identifier or filename of the sample
-
-mpa.MPAnno(inputFastq,output,Sam,env='metaphlan4.1',DB='/Database/MetaPhIAn4_1/DB_Jun23/')
-#MPAnno took 75.6562 seconds to execute.
-
-
-
-#Build MPBowtie object
-
-input_bowtie = Target_Path + 'MetaPhlAnAsign/annotation_file/Samplename_bowtie2' #497Mb
-
-result_dir = Target_Path + 'MetaPhlAnAsign/MPAsign/'
-
-obj=mpa.MPBowtie(input_bowtie,result_dir) 
-
-
-
-
-#Statistical cell annotation
-
-obj.CellSGBStatistic() 
-
-CellSGBStatistic took 60.7226 seconds to execute.
-
-#results
-
-obj.Cell_SGB_Count
-
-obj.Cell_Erro_Count
-
-
-
-
-
-#Classify cells (KnownSGB/UnknownCell/DoubleCell/UnAsignedCell)
-
 import pandas as pd
 
-BC_Count = pd.read_csv(Target_Path + 'Cell_Filter/bcread.txt',sep='\t',header=0)
+SampleName = "Samplename"
+Target_Path = "Your/Result/Path/"
 
-obj.CellAsign(BC_Count) 
-#CellAsign took 175.5504 seconds to execute.
+# MetaPhlAn4 annotation
 
-#results
+inputFastq = Target_Path + "Cell_Filter/Filtered_Fastq/" + SampleName + ".fastq"
 
-obj.KnownCell
+output = Target_Path + "MetaPhlAnAsign/annotation_file/"
 
-obj.DoubleCell
-
-obj.UnknownCell
-
-obj.UnAsignedCell
-
-obj.KnownCellAssem
-
-obj.Cell_Anno
+mpa.MPAnno(inputFastq, output, SampleName, env="metaphlan4.1", DB="/Database/MetaPhIAn4_1/DB_Jun23/")
 
 
 
+# Build MPBowtie object
+
+input_bowtie = Target_Path + "MetaPhlAnAsign/annotation_file/" + SampleName + "_bowtie2"
+
+result_dir = Target_Path + "MetaPhlAnAsign/MPAsign/"
+
+obj = mpa.MPBowtie(input_bowtie, result_dir)
 
 
-#Statistical distribution of phage reads
+
+
+# Count SGB and non-SGB alignments for each cell.
+obj.CellSGBStatistic()
+
+# Classify cells as KnownCell, UnknownCell, DoubleCell, or UnAsignedCell.
+BC_Count = pd.read_csv(Target_Path + "Cell_Filter/bcread.txt", sep="\t", header=0)
+obj.CellAsign(BC_Count)
+
+# Summarize non-SGB reads by host or SGB group.
 
 obj.HostPhage()
-#HostPhage took 0.5502 seconds to execute.
 
 
 
-#View the species distribution of multi-cell droplets.
+# View the species distribution of multi-cell droplets.
 
-CellBarn = Target_Path + 'Barn/CellTrim_single/' # Trimmed single-cell files
+CellBarn = Target_Path + "Barn/Cell/"
 
-obj.DoubleCellKraken(CellBarn,env='kraken',KrakenDB='/Database/k2_standard_20230605/',ReadsEnd='Single')
-# DoubleCellKraken took 3466.3195 seconds to execute.
+obj.DoubleCellKraken(CellBarn, env="kraken", KrakenDB="/Database/k2_standard_20230605/", ReadsEnd="Single")
 
 
-#Assemble cells provided by obj.KnownCellAssem
-# 1185 Cells
+# Assemble cells provided by obj.KnownCellAssem
+
 
 #obj.KnownCellAssem = pd.read_csv( Target_Path + 'MetaPhlAnAsign/MPAsign/KnownCellAssemShort.txt',sep='\t',header=0)
 
-CellBarn = Target_Path + 'Barn/CellTrim_single/' # Trimmed single-cell files
+CellBarn = Target_Path + "Barn/Cell/"
 
-obj.CellAssem(CellBarn,ReadsEnd='Single')
-#CellAssem took 3404.0547 seconds to execute.
+obj.CellAssem(CellBarn, ReadsEnd="Single")
 
+```
+
+## Test Data
+
+This step uses the output generated by the Step 1 and Step 2 paired-end tests.
+
+Before running this step, run the Step 1 and Step 2 tests with the same `Target_Path`.
+
+Required input from previous steps:
+
+```text
+Target_Path/Cell_Filter/Filtered_Fastq/
+├── Test_R1.fastq
+└── Test_R2.fastq
+
+Target_Path/Cell_Filter/
+└── bcread.txt
+
+Target_Path/Barn/Cell/
+├── Cell<TestID><BarcodeIndex>_R1.fastq
+└── Cell<TestID><BarcodeIndex>_R2.fastq
+```
+
+## Test Usage
+
+```python
+from MetaSAG import MetaPhlAnAsign as mpa
+import pandas as pd
+
+SampleName = "Test"
+Target_Path = "Your/Result/Path/"
+
+inputFastq = [
+    Target_Path + "Cell_Filter/Filtered_Fastq/Test_R1.fastq",
+    Target_Path + "Cell_Filter/Filtered_Fastq/Test_R2.fastq"
+]
+
+MPOut = Target_Path + "MetaPhlAnAsign/annotation_file/"
+
+mpa.MPAnno(inputFastq, MPOut, SampleName, env="metaphlan4.1", DB="/Database/MetaPhIAn4_1/DB_Jun23/")
+
+input_bowtie = Target_Path + "MetaPhlAnAsign/annotation_file/Test_bowtie2"
+result_dir = Target_Path + "MetaPhlAnAsign/MPAsign/"
+
+obj = mpa.MPBowtie(input_bowtie, result_dir)
+obj.CellSGBStatistic()
+
+BC_Count = pd.read_csv(Target_Path + "Cell_Filter/bcread.txt", sep="\t", header=0)
+obj.CellAsign(BC_Count)
+
+obj.HostPhage()
+
+CellBarn = Target_Path + "Barn/Cell/"
+obj.DoubleCellKraken(CellBarn, env="kraken", KrakenDB="/Database/k2_standard_20230605/", ReadsEnd="Pair")
+obj.CellAssem(CellBarn, ReadsEnd="Pair")
+```
+
+## Expected Output
+
+```text
+Target_Path/MetaPhlAnAsign/annotation_file/
+├── Test_profile.txt
+├── Test_bowtie2                         # MetaPhlAn4 Bowtie2 alignment output used by MPBowtie
+└── Test_VSC.txt
+
+Target_Path/MetaPhlAnAsign/MPAsign/
+├── Cell_SGB.txt
+├── Cell_Other.txt
+├── Cell_SGB_Count.txt
+├── Cell_Other_Count.txt
+├── AllCellSummary.txt                   # Per-cell SGB assignment summary
+├── KnownSGB.txt                         # Known-taxon cell assignments
+├── DoubleCell.txt                       # Multi-cell droplet assignments
+├── UnknownSGB.txt                       # Unknown-cell list
+├── UnAsignedSGB.txt                     # Unassigned-cell list
+├── KnownCellAssem_top50.txt             # Representative cells used for bin assembly
+├── CellAnno.txt                         # Key cell annotation file used by downstream analyses
+├── HostPhageResult/                     # Host/phage summary results
+├── DoubleCellReport/                    # Kraken2 reports for multi-cell droplets
+├── BinFastq/                            # SGB-level FASTQ files for assembly
+├── BinFasta/                            # Assembled genome FASTA files used by Step 5/6
+└── BinFastg/                            # Assembly graph files used by Step 5
 ```

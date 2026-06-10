@@ -1,249 +1,189 @@
 # MetaSAG Usage 
-## Step 4. Quality control and integration annotation of assembled genome.
+## Step 4. Droplet clustering of potentially unknown species
 
-## Part 1 Basic Quality Control
-
-## Func 1：FastaQC1(FastaDir,FastaOut)
-
+## Func 1：FilterUnassignedCells(AnnotationFile, inputFastqDir, OutputDir)
 - **Function Description:**
-Removes overly short contigs from all FASTA files in the specified directory.
+
+Automatically selects droplets that potentially belong to unknown species based on upstream annotation files and generates independent working directories for their aggregation.
 
 - **Required Parameters:**
 ```
-FastaDir        --      Path to the directory containing uncorrected FASTA files.
-                        Files must end with .fasta.
+AnnotationFile  --      The path to the `CellAnno.txt` file generated in the upstream `MetaSAG_MetaPhlAnAsign` step. 
 
-FastaOut        --      Path to save the directory of corrected FASTA files.
-```````
-- **Optional Parameters:**
-```
-minlen          --      Minimum contig length threshold in FASTA files.
-                        Default: 500 bp.
+inputFastq      --      The directory containing the individual FASTQ files for each cell.
+
+outputDir       --      Path to the output directory.
 ```
 
 
-## Func 2：FastaQC2(FastaDir,FastaOut,CheckmFile)
-
+## Func 2：ClusterSAG(inputFastq,outputDir)
 - **Function Description:**
-Classifies genome FASTA files into "Pass", "Bandage" (subdivided into "low" and "medium" for manual correction), or "Abandon" based on CheckM results. 
-It introduces a multi-routing logic: specific high-quality drafts (e.g., completeness > 90% and 5% < contamination < 10%) are simultaneously output to "Pass" for automated pipeline progression and "Bandage/medium" for optional manual refinement. Additionally, it supports copying corresponding FASTG assembly graphs into the Bandage directories if an input directory is provided.
+
+Performs clustering (first round) on selected potentially unknown species.
 
 - **Required Parameters:**
 ```
-FastaDir        --      Path to the directory containing corrected FASTA files.
 
-FastaOut        --      Path to save the classification results of FASTA files.
+inputFastq      --      Path to the fastq files directory of potentially unknown species droplets.
 
-CheckmFile      --      CheckM result table for the corrected FASTA files.
-```````
-- **Optional Parameters:**
+outputDir       --      Path to save the clustering results.
+
 ```
-FastgDir        --      If a fastg folder is provided, copy corresponding fastg files to the Bandage folder; 
-                        if not, only place corresponding FASTA files in the Bandage folder.
-                        Default: None.
-```
-
-```bash
-#Execution Command Examples
-
-from MetaSAG import BinQCAnno as bqa
-
-
-# Remove contigs <500bp in length
-
-FastaDir = Target_Path + 'MetaPhlAnAsign/MPAsign/BinFasta/'
-
-FastaOut = Target_Path + "Bin_QC/BinFastaQC1/"
-
-bqa.FastaQC1(FastaDir,FastaOut)
-
-
-
-# Evaluate genome assembly quality based on CheckM files and determine which assemblies need further correction
-
-FastaDir = Target_Path + 'Bin_QC/BinFastaQC1/'
-
-FastgDir = Target_Path + 'MetaPhlAnAsign/MPAsign/BinFastg/'
-
-CheckmFile = Target_Path + 'Bin_QC/BinFastaQC1/check/qa_results'
-
-FastaOut = Target_Path + 'Bin_QC/BinFastaQC2/'
-
-bqa.FastaQC2(FastaDir,FastaOut,CheckmFile,FastgDir=FastgDir) 
-```
-
-
-## Part 2 [Optional Branch] SAG-gel sequencing-specific filtering
-
-## Func 3：RebinMetaBAT2(InputDir, OutputDir)
-
-- **Function Description:**
-Re-bin high-contamination genome files using MetaBAT2.
-
-- **Required Parameters:**
-```
-InputDir    --    Input directory path of FASTA files to be filtered.
-
-OutputDir   --    Centralized storage path for binned FASTA files.
-```
-
 
 - **Optional Parameters:**
 ```
-MetaBat2_env  --      The name of the conda environment specified for running MetaBAT2.
-                      Default Value: None.
+ReadsEnd        --      Type of droplet sequencing files (single-end or paired-end).
+                        Default: single-end, ReadsEnd='Single'.
+                        For paired-end, set ReadsEnd='Pair'.
+                        
+SpadesEnv       --      Conda environment required for running Spades.py.
+                        Default: None
+                        
+SourmashEnv     --      Conda environment required for running Sourmash.
+                        Default: None            
 
-threads       --      [MetaBAT2 parameter] Number of threads to use for binning.
-                      Default Value: 16.
+ClusterThreshold--      The cut-off threshold used for forming flat clusters.
+                        Default: 0.95.  
 
-min_contig    --      [MetaBAT2 parameter] Minimum contig length required for binning, including Tetranucleotide Frequency (TNF) calculation.
-                      Default Value: 1500.
-
-max_edges     --      [MetaBAT2 parameter] Maximum number of edges allowed in the clustering graph.
-                      Default Value: 500.
-
-min_cls_size  --      [MetaBAT2 parameter] Minimum size of a bin as the output (in base pairs).
-                      Default Value: 100000.
+ClusterCriterion--      The criterion used to determine cluster formation.
+                        Available options are 'distance' and 'inconsistent'.
+                        Default: 'distance'.     
 ```
-## Func 4：FilterMetaBAT2(InputDir, OutputDir, CheckmFile, Level)
+
+
+
+## Func 3：ClusterBin(OldRoundFold,NewRoundFold)
 
 - **Function Description:**
-Score genomes produced by RebinMetaBAT2 using the formula: Completeness - 5 * Contamination, and extract the highest-scoring file. Based on the resulting quality, perform routing classification: medium-to-high-quality genomes are directly stored in the Pass/ directory for downstream analysis; genomes with strain heterogeneity ≤ 40 and in a borderline quality state (completeness > 90%, or > 50% but not meeting higher-tier criteria) are considered optimizable and are assigned to the To_Improve/ directory for further refinement; genomes with strain heterogeneity > 40 or those whose quality degrades after filtering are deemed unsuitable for this pipeline and are routed to To_Improve/Abandon for discard.
+
+Performs an additional round of clustering based on previous clustering results as needed.
+
 
 - **Required Parameters:**
 ```
-InputDir    --      The input directory containing all genome bins generated by RebinMetaBAT2. 
 
-OutputDir   --      The output directory for categorizing and storing the highest-scoring genome files selected from each bin.
+OldRoundFold    --      Root path of the previous clustering results (input data for the function).
 
-CheckmFile  --      The file path to the CheckM 'qa_results' generated by the user evaluating all newly binned genomes.
+outputDir       --      Path to save the results of the additional clustering.
 
-Level       --      The original quality level of the genome prior to RebinMetaBAT2 processing. 
-                    Acceptable values: 'low' or 'medium'.
 ```
-
 
 - **Optional Parameters:**
 ```
-max_het     --      The maximum strain heterogeneity threshold used to determine if the genome qualifies for further filtering and refinement.
-                    Default Value: 40.
+ReadsEnd        --      Type of droplet sequencing files (single-end or paired-end).
+                        Default: single-end, ReadsEnd='Single'.
+                        For paired-end, set ReadsEnd='Pair'.
+                        
+SpadesEnv       --      Conda environment required for running Spades.py.
+                        Default: None
+                        
+SourmashEnv     --      Conda environment required for running Sourmash.
+                        Default: None
+
+ClusterThreshold--      The cut-off threshold used for forming flat clusters.
+                        Default: 0.95.  
+
+ClusterCriterion--      The criterion used to determine cluster formation.
+                        Available options are 'distance' and 'inconsistent'.
+                        Default: 'distance'.                      
 ```
-
-
-```bash
-#Execution Command Examples
-
-from MetaSAG import BinQCAnno as bqa
-
-Low_InputDir = Target_Path + 'Bin_QC/BinFastaQC2/Bandage/low/'
-
-Low_OutputDir = Target_Path + 'Bin_QC/RefineBandageBins/all_Metabat2_bin/low/'
-
-bqa.Rebin_with_MetaBAT2(Low_InputDir, Low_OutputDir)
-
-
-
-Low_InputDir = Target_Path + 'Bin_QC/RefineBandageBins/all_Metabat2_bin/low/'
-
-Low_CheckmFile = Target_Path + 'Bin_QC/RefineBandageBins/all_Metabat2_bin/low/check/qa_results'
-
-OutputDir = Target_Path + 'Bin_QC/RefineBandageBins/Filter_Metabat2_bin/'
-
-bqa.Filter_MetaBAT2_Bins(Low_InputDir, OutputDir, Low_CheckmFile, 'low') 
-```
-
-
-## Part 3 Integration & Annotation
-
-## Func 5：MergeFasta(dir1, dir2, output_dir)
-
-- **Function Description:**
-
-This function aggregates genome FASTA files generated from quality control and filtering steps into a single directory for downstream analysis, but it is strictly designed for the SAG-gel sequencing-specific filtering workflow to merge initial QC results with refined MetaBAT2 results. During the merge, if file name conflicts occur, the files in the high-priority directory (dir2) will take precedence and overwrite those in the low-priority directory (dir1).
-
-- **Required Parameters:**
-```
-dir1        --      The low-priority directory containing genome files that passed the initial quality control.
-
-dir2        --      The high-priority directory containing genome files with improved quality after filtering.
-
-output_dir  --      The destination directory to store the final aggregated high-quality genome files.
-```
-
-
-## Func 6：Summary(FastaSGB,CheckmFile,GTDBFile)
-
-- **Function Description:**
-
-Integrates results from MetaPhlAnN4 classification files (FastaSGB), CheckM quality inspection files (CheckmFile), and GTDB-TK annotation files (GTDBFile) for assembled genomes.
-
-- **Required Parameters:**
-```
-FastaSGB        --      Path to the MetaPhlAnN4 annotation classification file for assembled genomes.
-
-CheckmFile      --      CheckM quality inspection file for assembled genomes.
-
-GTDBFile        --      GTDB-TK annotation file for assembled genomes.
-```
-
-
-- **Optional Parameters:**
-```
-outputSummary   --      Path to save the integrated annotation results file.
-                        Default: None (results are returned as a DataFrame object).
-```
-
-
-
-Eg. FastaSGB (first column: bin genome file name without .fasta suffix; second column: MetaPhlAn4 classification SGB ID)
-
-|   Bin   |   SGB    |
-|:-------:|:--------:|
-| genome1 | SGB1024  |
-| genome2 | SGB28348 |
-| genome3 | SGB4348  |
-|   ...   |   ...    |
-
-
-- **Result:**
-
-Eg. Summary.txt
-
-|   Bin   |   SGB    |                                                         SGBName                                                          | Completeness | Contamination | closest_reference |                                                     closest_taxonomy                                                     |closest_ani|ContamFlag|CompleteFlag|QC|
-|:-------:|:--------:|:------------------------------------------------------------------------------------------------------------------------:|:------------:|:-------------:|:-----------------:|:------------------------------------------------------------------------------------------------------------------------:|:---:|:---:|:---:|:---:|
-| genome1 | SGB1024  |              k__Bacteria\|p__Bacteroidetes\|c__CFGB343\|o__OFGB343\|f__FGB343\|g__GGB781\|s__GGB781_SGB1024              |    96.02     |     13.66     |  GCA_000434395.1  |                d__Bacteria;p__Firmicutes;c__Bacilli;o__RFN20;f__CAG-288;g__CAG-568;s__CAG-568 sp000434395                |97.29|fail|pass|Low|
-| genome2 | SGB28348 | k__Bacteria\|p__Bacteroidetes\|c__Cytophagia\|o__Cytophagales\|f__Cytophagaceae\|g__Aquirufa\|s__Aquirufa_antheringensis |    86.21     |     71.32     |        no         |                                                            no                                                            |no|fail|pass|Low|
-| genome3 | SGB4348  |            k__Bacteria\|p__Firmicutes\|c__CFGB4806\|o__OFGB4806\|f__FGB4806\|g__GGB51647\|s__GGB51647_SGB4348            |    98.66     |     7.31      |  GCA_000432435.1  | d__Bacteria;p__Firmicutes_A;c__Clostridia;o__Oscillospirales;f__Acutalibacteraceae;g__Fimenecus;s__Fimenecus sp000432435 |98.92|pass|pass|Medium|
-|   ...   |   ...    |                                                           ...                                                            |     ...      |      ...      |        ...        |                                                           ...                                                            |...|...|...|...|
-
 
 
 
 ```bash
-#Execution Command Examples
 
-from MetaSAG import BinQCAnno as bqa
+# Execution Command Examples
 
-BinFastaQC2 = Target_Path + 'Bin_QC/BinFastaQC2/Pass/'
+from MetaSAG import UnknownSAG as usag
 
-RefineBandageBins = Target_Path + 'Bin_QC/RefineBandageBins/Filter_Metabat2_bin/Pass/'
+fastqDir = Target_Path + 'CellBarn/'  
 
-PASS = Target_Path + 'Bin_QC/PASS/'
+cellAnno =  Target_Path + 'MetaPhlAnAsign/MPAsign/CellAnno.txt'
 
-bqa.merge_fasta_dirs_copy(BinFastaQC2, RefineBandageBins, PASS)
+outputdir = Target_Path + 'UnknownSAG/'
 
+fastq_outputdir = outputdir + "Fastq/"
 
+usag.FilterUnassignedCells(cellAnno, fastqDir, fastq_outputdir)
 
-# Integrate MetaPhlAnN4 annotation classification, CheckM quality assessment, and GTDBTK annotation classification results
+usag.ClusterSAG(fastq_outputdir,outputdir,ReadsEnd = 'Pair',SourmashEnv='sourmash') # Initial clustering of unknown species droplets
 
-FastaSGB = Target_Path + 'Bin_QC/BinFastaQC2/Pass/FastaSGB.txt'
+Round1Dir=os.path.join(outputdir,'Round1')
 
-CheckmFile = Target_Path + 'Bin_QC/BinFastaQC1/check/qa_results'
+Round2Dir=os.path.join(outputdir,'Round2')
 
-GTDBFile = Target_Path + 'Bin_QC/BinFastaQC2/Pass/gtdb_out/gtdbtk.bac120.summary.tsv'
+usag.ClusterBin(Round1Dir,Round2Dir,ReadsEnd = 'Pair',SourmashEnv='sourmash') # Re-clustering of unknown species droplet bins based on initial results
 
-outputSummary = Target_Path + 'Bin_QC/summary.txt'
-
-summary=bqa.Summary(FastaSGB,CheckmFile,GTDBFile,outputSummary)
 ```
 
+## Note on Test Data Limitation
+
+This step is designed for droplets that remain unassigned after the MetaPhlAn4-based cell annotation step.
+
+It uses the `CellAnno.txt` file generated in Step 3 to select cells labeled as `UnAsignedCell`, then clusters and assembles these droplets to explore potentially unknown species.
+
+Because the Step 1–5 test dataset is intentionally small and mainly used to verify that the workflow can run, it may contain too few unassigned droplets, or the selected droplets may have insufficient sequencing depth. In that case, Step 4 may not generate meaningful clustering or assembly results.
+
+For real biological interpretation, users should run this step on their own data with enough unassigned droplets and sufficient read depth.
+
+Required input from previous steps:
+
+```text
+Target_Path/MetaPhlAnAsign/MPAsign/
+└── CellAnno.txt
+
+Target_Path/Barn/Cell/
+├── Cell<SampleID><BarcodeIndex>_R1.fastq
+└── Cell<SampleID><BarcodeIndex>_R2.fastq
+```
+
+`CellAnno.txt` is the key input file used to identify `UnAsignedCell` droplets. The corresponding cell FASTQ files are then selected from `Barn/Cell/` for unknown-species clustering.
+
+## Usage Template
+
+```python
+from MetaSAG import UnknownSAG as usag
+import os
+
+Target_Path = "Your/Result/Path/"
+
+cellAnno = Target_Path + "MetaPhlAnAsign/MPAsign/CellAnno.txt"
+fastqDir = Target_Path + "Barn/Cell/"
+outputDir = Target_Path + "UnknownSAG/"
+fastqOutputDir = outputDir + "Fastq/"
+
+usag.FilterUnassignedCells(cellAnno, fastqDir, fastqOutputDir)
+
+usag.ClusterSAG(
+    fastqOutputDir,
+    outputDir,
+    ReadsEnd="Pair",
+    SourmashEnv="sourmash"
+)
+
+Round1Dir = os.path.join(outputDir, "Round1")
+Round2Dir = os.path.join(outputDir, "Round2")
+
+usag.ClusterBin(
+    Round1Dir,
+    Round2Dir,
+    ReadsEnd="Pair",
+    SourmashEnv="sourmash"
+)
+```
+
+## Expected Output
+
+If enough unassigned droplets are available, this step may generate:
+
+```text
+Target_Path/UnknownSAG/
+├── Fastq/                         # FASTQ files of selected UnAsignedCell droplets
+├── Round1/
+│   ├── CellFasta/                 # SPAdes assemblies for selected cells
+│   ├── sig/                       # sourmash signatures
+│   └── round1_cluster_cell.txt    # Initial clustering result
+└── Round2/                        # Optional re-clustering result
+```
+
+For small test datasets, these outputs may be empty or not biologically meaningful.
