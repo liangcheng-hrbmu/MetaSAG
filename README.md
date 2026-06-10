@@ -52,7 +52,7 @@ We offer **MetaSAG**, a comprehensive integrated tool that can parse microbial S
 
 - **Install**
 
-MetaSAG is currently under code review and has not yet been released on PyPI. A PyPI release will be provided in a future version. At this stage, MetaSAG can only be installed from the GitHub source code.
+MetaSAG is currently under code review and has not yet been released on PyPI. A PyPI release will be provided soon. At this stage, MetaSAG can only be installed from the GitHub source code.
 
 ```bash
 git clone https://github.com/liangcheng-hrbmu/MetaSAG.git
