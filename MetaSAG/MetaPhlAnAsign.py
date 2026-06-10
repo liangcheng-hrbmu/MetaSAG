@@ -36,6 +36,11 @@ def MPAnno(inputFastq, MPOut, SamName, env=None, DB=None):
     OutProfile = os.path.join(MPOut, SamName + '_profile.txt')
     OutBowtie = os.path.join(MPOut, SamName + '_bowtie2.bz2')
     OutVSC = os.path.join(MPOut, SamName + '_VSC.txt')
+    UncompressedBowtie = OutBowtie[:-4] if OutBowtie.endswith('.bz2') else OutBowtie
+
+    for old_file in [OutProfile, OutBowtie, UncompressedBowtie, OutVSC]:
+        if os.path.exists(old_file):
+            os.remove(old_file)
 
     if type(inputFastq) == str and inputFastq.endswith('.fastq'):
         ReadsEnd = 'Single'
@@ -74,11 +79,11 @@ def MPAnno(inputFastq, MPOut, SamName, env=None, DB=None):
         command = f'metaphlan {inputFastq} --input_type fastq --profile_vsc --nproc 4 -o {OutProfile} --bowtie2out {OutBowtie} --vsc_out {OutVSC} --offline'
 
     if env is not None:
-        subprocess.run(['conda', 'run', '-n', env, 'bash', '-c', command])
+        subprocess.run(['conda', 'run', '-n', env, 'bash', '-c', command], check=True)
     else:
-        subprocess.call(command, shell=True)
+        subprocess.run(command, shell=True, check=True)
 
-    subprocess.call('bunzip2 ' + OutBowtie, shell=True)
+    subprocess.run(['bunzip2', OutBowtie], check=True)
 
 
 ######Step2 count the count of each cell * each SGB in the Bowtie2Anno file ######

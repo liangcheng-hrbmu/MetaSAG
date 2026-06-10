@@ -1,4 +1,5 @@
 from . import BarcodeDeal
+from . import BarcodeTagFunc
 from . import BCFilter
 from . import BinQCAnno
 from . import CellHGT
