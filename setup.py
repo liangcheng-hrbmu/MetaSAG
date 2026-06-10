@@ -7,7 +7,7 @@ def readme_file():
 setup(
     name='MetaSAG',
     version='1.3.10',
-    description='A compiled and protected Python test package',
+    description='A microbial single-amplified genome droplet sequencing analysis toolkit',
     long_description=readme_file(),
     long_description_content_type="text/markdown",
     author='LiangCheng',
@@ -15,7 +15,12 @@ setup(
     url='https://github.com/liangcheng-hrbmu/MetaSAG',
     packages=find_packages(),
     package_data={
-        '': ['READMESource/*', '*.h5', '*.R', '*.npy'], 
+        'MetaSAG': [
+            '*.R',
+            '*.txt',
+            '*.xlsx',
+            'trimmomatic/*',
+        ],
     },
     include_package_data=True,
 
@@ -27,7 +32,7 @@ setup(
         'MetaSAG/strain_analysis_multi_sgb.R'
     ],
 
-    python_requires='>=3.6',
+    python_requires='>=3.8',
 
     install_requires=[
         'setuptools==59.8.0',

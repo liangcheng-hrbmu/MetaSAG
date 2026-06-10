@@ -52,10 +52,12 @@ We offer **MetaSAG**, a comprehensive integrated tool that can parse microbial S
 
 - **Install**
 
-MetaSAG is currently undergoing testing on TestPyPI. To ensure all dependencies (such as pandas, tensorflow) are installed correctly, please use the following command for installation:
+MetaSAG is currently under code review and has not yet been released on PyPI. A PyPI release will be provided in a future version. At this stage, MetaSAG can only be installed from the GitHub source code.
 
 ```bash
-pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ metasag==1.3.10
+git clone https://github.com/liangcheng-hrbmu/MetaSAG.git
+cd MetaSAG
+pip install .
 ```
 
 - **Requirements**
@@ -77,12 +79,12 @@ other tools or packages you need and their version we list here:
 -  [**Step 1. Distribute the reads in the sample to a file of individual droplets.**](READMESource/READMEUsage1.md)
 -  [**Step 2. Filter low-quality cells**](READMESource/READMEUsage2.md)
 -  [**Step 3. MetaPhlAn4 annotates the reads and classifies droplets**](READMESource/READMEUsage3.md)
--  [**Step 4. Quality control and integration annotation of assembled genome**](READMESource/READMEUsage4.md)
--  [**Step 5. Build phylogenetic tree**](READMESource/READMEUsage5.md)
--  [**Step 6. Species to Strain resolved genomes**](READMESource/READMEUsage6.md)
--  [**Step 7. Horizontal Gene Transfer**](READMESource/READMEUsage7.md)
--  [**Step 8. HUMAnN Path**](READMESource/READMEUsage8.md)
--  [**Step 9. Droplet clustering of potentially unknown species**](READMESource/READMEUsage9.md)
+-  [**Step 4. Droplet clustering of potentially unknown species**](READMESource/READMEUsage4.md)
+-  [**Step 5. Quality control and integration annotation of assembled genome**](READMESource/READMEUsage5.md)
+-  [**Step 6. Build phylogenetic tree**](READMESource/READMEUsage6.md)
+-  [**Step 7. Species to Strain resolved genomes**](READMESource/READMEUsage7.md)
+-  [**Step 8. Horizontal Gene Transfer**](READMESource/READMEUsage8.md)
+-  [**Step 9. HUMAnN Path**](READMESource/READMEUsage9.md)
 -  [**Step 10. SGB Strain Evolution Analysis Function**](READMESource/READMEUsage10.md)
 -  [**Step 11. MetaK-Lytic**](READMESource/READMEUsage11.md)
 
