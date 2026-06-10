@@ -61,7 +61,7 @@ resultDir/
 │   └── Cell<SampleID><BarcodeIndex>_R2.fastq
 └── ReadsCount.csv
 ```
-
+- **Example:** See the [Test Usage](#test-usage) section for an example run using the provided test data.
 
 ## Func 1：BarcodeTag(InputFastq,CellFastq,ErrorFastq,TagFunc)
 

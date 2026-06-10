@@ -17,6 +17,8 @@ SpeciesName --      Name of the bin's assembled genome file (without the .fasta 
 
 ```
 
+- **Example:** See the [Test Usage](#test-usage) section for an example run using the provided test data.
+
 ## Func 1：SingleBinPrepare()
 
 - **Function Description:**

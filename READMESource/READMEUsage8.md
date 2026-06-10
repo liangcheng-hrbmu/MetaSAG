@@ -13,6 +13,7 @@ FastaDir        --      Path to input genome files.
 outputDir       --      Path to save results.
 
 ```
+- **Example:** See the [Test Usage](#test-usage) section for an example run using the provided test data.
 
 ## Func 1：SpeciesHGT()
 

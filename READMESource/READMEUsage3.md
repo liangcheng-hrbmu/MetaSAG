@@ -57,6 +57,8 @@ inputBowtie     --  MetaPhlAn4 annotation results file.
 outputdir       --  Specifies the directory path where all output files will be saved.
 ```
 
+- **Example:** See the [Test Usage](#test-usage) section for an example run using the provided test data.
+
 ## Func 1：CellSGBStatistic()
 
 - **Function Description:**

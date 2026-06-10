@@ -15,6 +15,7 @@ inputFastq  --  Location of short-read sequencing file(s).
 outputdir   --  Specifies the file path where result files will be stored.
 ```````
 
+- **Example:** See the [Test Usage](#test-usage) section for an example run using the provided test data.
 
 ## Func 1：CellCountStatistic()
 

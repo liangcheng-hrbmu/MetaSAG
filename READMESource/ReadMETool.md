@@ -22,6 +22,8 @@ Python Packages:
     numpy       [1.23.5]
     statsmodels [0.14.0]
 metaphlan       [4.1.1]
+MetaPhlAn DB    [CHOCOPhlAn/SGB DB_Jun23]
+Kraken2 DB      [k2_standard_20230605]
 spades          [3.13.0] 
 ```
 
@@ -30,15 +32,17 @@ spades          [3.13.0]
 Python Packages:
     shutil
     math
-checkm  [1.2.2]
-gtdbtk  [2.3.2]
+checkm       [1.2.2]
+CheckM DB    [default lineage marker database]
+gtdbtk       [2.3.2]
+GTDB-TK DB   [GTDBTK-2.1.1_DB]
 ```
 
 - **SAG-gel Filtering with Rebin MetaBAT2**
 ```
 metabat2   [2.18]
 bwa        [0.7.19]
-samtools   [1.23.1]
+samtools   [1.17]
 htslib     [1.23.1]
 boost-cpp  [1.85.0]
 libgcc     [15.2.0]
@@ -46,16 +50,18 @@ libgcc     [15.2.0]
 
 - **Build Tree**
 ```
-anvi'o  [7.1]
+anvi'o       [7.1]
+ANVI'O HMM   [Bacteria_71 ribosomal protein HMMs]
 itol
 ```
 
 - **Cell HGT**
 ```
-blastn  [2.14.0]
-prokka  [1.13]
-emapper [2.1.12]
-cdhit   [4.8.1]
+blastn       [2.14.0]
+prokka       [1.13]
+emapper      [2.1.12]
+eggNOG DB    [eggNOG-mapper2 compatible database]
+cdhit        [4.8.1]
 ```
 
 - **Species to Strain by SNP**
@@ -79,6 +85,7 @@ R Packages:
     circlize        [0.4.16]
     getopt          [1.20.4]
 diamond             [2.0.15]
+UniRef DB           [UniRef90 2019_01b]
 humann              [3.9]
 ```
 

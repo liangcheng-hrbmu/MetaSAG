@@ -15,6 +15,7 @@ This function processes **SGB*_Result** folders and:
 
     -Generates reports and plots
 
+- **Example:** See the [Test Usage](#test-usage) section for an example run using the provided test data.
 
 ## Required Input
 

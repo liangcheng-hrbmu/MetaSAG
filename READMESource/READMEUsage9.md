@@ -16,6 +16,8 @@ ResultDir       --      Path to save the results.
 
 ```
 
+- **Example:** See the [Test Usage](#test-usage) section for an example run using the provided test data.
+
 ## Func 1：Diamond()
 
 - **Function Description:**
