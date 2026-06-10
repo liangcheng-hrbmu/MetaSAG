@@ -60,7 +60,8 @@ itol
 blastn       [2.14.0]
 prokka       [1.13]
 emapper      [2.1.12]
-eggNOG DB    [eggNOG-mapper2 compatible database]
+eggNOG DB    [5.0.2]
+diamond      [2.0.15]
 cdhit        [4.8.1]
 ```
 
