@@ -310,8 +310,6 @@ Target_Path/Bin_QC/BinFastaQC1/check/qa_results
 ```bash
 #!/bin/bash
 
-source /data_alluser/miniconda3/etc/profile.d/conda.sh
-conda activate gtdbtk-2.1.1
 export GTDBTK_DATA_PATH=/Database/GTDBTK-2.1.1_DB
 
 BASE="Your/Result/Path/Bin_QC/BinFastaQC2/Pass"
