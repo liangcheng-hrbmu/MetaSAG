@@ -158,6 +158,7 @@ usag.ClusterSAG(
     fastqOutputDir,
     outputDir,
     ReadsEnd="Pair",
+    SpadesEnv=SpadesEnv,
     SourmashEnv="sourmash"
 )
 
@@ -168,6 +169,7 @@ usag.ClusterBin(
     Round1Dir,
     Round2Dir,
     ReadsEnd="Pair",
+    SpadesEnv=SpadesEnv,
     SourmashEnv="sourmash"
 )
 ```
