@@ -1,0 +1,43 @@
+name: metasag
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  # Python runtime for MetaSAG. Python package dependencies are still managed
+  # by setup.py when MetaSAG is installed with pip.
+  - python=3.8
+  - pip
+
+  # Core R runtime and R packages used directly by MetaSAG R scripts that run
+  # in the current environment via Rscript.
+  #
+  # Covered scripts:
+  #   - SeuratSGB.R: Seurat, dplyr, getopt
+  #   - PathClusterHeatmap.R: reshape2, ComplexHeatmap, circlize, pheatmap,
+  #     dplyr, getopt
+  #   - strain_analysis_multi_sgb.R: optparse, dplyr, ape, ggplot2
+  #
+  # Notes:
+  #   - External bioinformatics tools invoked through explicit env parameters
+  #     are intentionally not included here.
+  #   - sankeyD3 is intentionally not included as a core dependency because it
+  #     is only used by DoublePlotByPavian.R and may be unavailable for some R
+  #     versions/channels.
+  - r-base
+  - r-seurat
+  - r-dplyr
+  - r-getopt
+  - r-reshape2
+  - bioconductor-complexheatmap
+  - r-circlize
+  - r-pheatmap
+  - r-optparse
+  - r-ape
+  - r-ggplot2
+
+  # Install MetaSAG itself from the local source tree. This triggers setup.py
+  # for Python package installation.
+  - pip:
+      - .
