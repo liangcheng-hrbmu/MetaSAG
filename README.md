@@ -53,18 +53,29 @@ We offer **MetaSAG**, a comprehensive integrated tool that can parse microbial S
 
 - **Requirements**
 ```
-MetaSAG requires Python version >= 3.8.0, R version >= 4.2.2, 
+MetaSAG requires Python version >= 3.8.0, R version >= 4.2.2,
 other tools or packages you need and their version we list here:
 ```
 [Tools we recommand](READMESource/ReadMETool.md)
+
+The core Python/R dependencies used by MetaSAG scripts that run in the current environment are provided in `environment.yml`. External bioinformatics tools that are called through user-specified environments, such as MetaPhlAn, HUMAnN, Prokka, CD-HIT, Kraken, SPAdes, and anvi'o, should still be configured separately as described in the corresponding usage sections.
 
 - **Install**
 
 MetaSAG is currently under code review and has not yet been released on PyPI. A PyPI release will be provided soon. At this stage, MetaSAG can only be installed from the GitHub source code.
 
+The recommended installation method is to create the conda environment from `environment.yml`, which installs MetaSAG together with the core R dependencies required by the R scripts that run in the current environment.
+
 ```bash
 git clone https://github.com/liangcheng-hrbmu/MetaSAG.git
 cd MetaSAG
+conda env create -f environment.yml
+conda activate metasag
+```
+
+If you already have a suitable Python/R environment and only want to install the Python package, you can still use:
+
+```bash
 pip install .
 ```
 
