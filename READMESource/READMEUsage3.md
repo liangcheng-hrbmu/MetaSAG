@@ -338,7 +338,7 @@ obj.DoubleCellKraken(CellBarn, env="kraken", KrakenDB="/Database/k2_standard_202
 
 CellBarn = Target_Path + "Barn/Cell/"
 
-obj.CellAssem(CellBarn, ReadsEnd="Single")
+obj.CellAssem(CellBarn, env="spades",ReadsEnd="Single")
 
 ```
 
@@ -394,7 +394,7 @@ obj.HostPhage()
 
 CellBarn = Target_Path + "Barn/Cell/"
 obj.DoubleCellKraken(CellBarn, env="kraken", KrakenDB="/Database/k2_standard_20230605/", ReadsEnd="Pair")
-obj.CellAssem(CellBarn, ReadsEnd="Pair")
+obj.CellAssem(CellBarn, env="spades",ReadsEnd="Pair")
 ```
 
 ## Expected Output

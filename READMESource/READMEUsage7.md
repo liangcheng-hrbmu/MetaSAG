@@ -202,7 +202,7 @@ SingleBin.SingleBinSplit(2)
 
 StrainAssemDir = Target_Path + "SNPStrain/single_result/SGB6796/"
 
-SingleBin.StrainAssem(StrainAssemDir= StrainAssemDir, ReadsEnd='Pair')
+SingleBin.StrainAssem(StrainAssemDir= StrainAssemDir, env="spades", ReadsEnd='Pair')
 ```
 
 
@@ -365,7 +365,7 @@ AllBin.AllBinSplit()
 
 StrainAssemDir = Target_Path + 'SNPStrain/All/Bin/'
 
-AllBin.AllBinStrainAssem(StrainAssemDir = StrainAssemDir , ReadsEnd='Pair')
+AllBin.AllBinStrainAssem(StrainAssemDir = StrainAssemDir ,env="spades", ReadsEnd='Pair')
 ```
 
 ## Test Data
@@ -425,7 +425,7 @@ SingleBin.SingleBinPrepare(
 SingleBin.SingleBinSplit(2)
 
 StrainAssemDir = Target_Path + "SNPStrain/SingleBin/StrainAssem/"
-SingleBin.StrainAssem(StrainAssemDir=StrainAssemDir, ReadsEnd="Single")
+SingleBin.StrainAssem(StrainAssemDir=StrainAssemDir, env="spades",ReadsEnd="Single")
 ```
 
 ## Expected Output
