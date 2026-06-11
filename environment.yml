@@ -22,9 +22,8 @@ dependencies:
   # Notes:
   #   - External bioinformatics tools invoked through explicit env parameters
   #     are intentionally not included here.
-  #   - sankeyD3 is intentionally not included as a core dependency because it
-  #     is only used by DoublePlotByPavian.R and may be unavailable for some R
-  #     versions/channels.
+  #   - sankeyD3 is installed from GitHub by setup_r.R because it is not
+  #     reliably available as a conda package.
   - r-base
   - r-seurat
   - r-dplyr
@@ -36,6 +35,7 @@ dependencies:
   - r-optparse
   - r-ape
   - r-ggplot2
+  - r-remotes
 
   # Install MetaSAG itself from the local source tree. This triggers setup.py
   # for Python package installation.
