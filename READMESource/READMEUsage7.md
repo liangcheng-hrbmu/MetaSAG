@@ -411,7 +411,7 @@ SingleBin.SetupRunDir(fastaDir, fastqDir, cellAnno, ReadsEnd="Single")
 
 snap_aligner = "/Tools/SNAP/snap-aligner"
 bcftools = "/Tools/bcftools/bcftools-1.18/bcftools"
-samtools = "samtools"
+samtools = "/Tools/samtools/samtools-1.17/samtools"
 
 SingleBin.SingleBinPrepare(
     bcftools=bcftools,
