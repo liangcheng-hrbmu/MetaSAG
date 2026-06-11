@@ -16,6 +16,7 @@ We offer **MetaSAG**, a comprehensive integrated tool that can parse microbial S
 
 - [Main Features](#Main-Features)
 - [Requirements and installation](#Requirements-and-installation)
+- [Quick-start workflow demo](#Quick-start-workflow-demo)
 - [Usage](#Usage)
 - [FAQs](#FAQs)
 - [License](#License)
@@ -66,6 +67,18 @@ git clone https://github.com/liangcheng-hrbmu/MetaSAG.git
 cd MetaSAG
 pip install .
 ```
+
+
+
+## Quick-start workflow demo
+
+A lightweight Jupyter notebook is provided to demonstrate the main MetaSAG workflow using bundled example data:
+
+- [MetaSAG_workflow_demo.ipynb](MetaSAG_workflow_demo.ipynb)
+
+This notebook walks through the major steps of MetaSAG, including droplet read splitting, low-quality cell filtering, taxonomic assignment, unknown-species droplet clustering, genome quality control and annotation, phylogenetic tree construction, strain-level analysis, horizontal gene transfer analysis, and HUMAnN pathway analysis.
+
+Please note that the example dataset is intentionally small and is mainly intended for workflow demonstration. Some downstream steps may generate limited outputs, empty results, or no complete test result files. For biological interpretation, users should run MetaSAG on their own datasets with sufficient sequencing depth and appropriate external database/tool configurations.
 
 
 
