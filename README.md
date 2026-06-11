@@ -76,6 +76,8 @@ conda activate metasag
 If you already have a suitable Python/R environment and only want to install the Python package, you can still use:
 
 ```bash
+git clone https://github.com/liangcheng-hrbmu/MetaSAG.git
+cd MetaSAG
 pip install .
 ```
 
