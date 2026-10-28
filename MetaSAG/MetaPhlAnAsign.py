@@ -408,6 +408,131 @@ class MPBowtie():
         self.Phage_Cluster_CellNumProp = Table2
 
     @timeit
+    def PlotHostPhageSummary(self, min_cell_phage=80, low_read_fraction=0.2,
+                             min_species_cells=10, min_host_cells=10,
+                             main_host_contribution=0.9, sgb_list=None):
+        """Create R summary plots from raw Other IDs or pre-aggregated CellMGroup counts.
+
+        Other IDs are collapsed to MGroups before filtering, as in the R analysis.
+        sgb_list accepts SGB IDs, a one-ID-per-line text file, or a FASTA directory.
+        Output files are placed in HostPhageResult and their paths are returned.
+        """
+        if min_cell_phage < 0 or not 0 <= low_read_fraction < 1:
+            raise ValueError('Invalid read filter thresholds')
+        if min_species_cells < 0 or min_host_cells < 0 or not 0 < main_host_contribution <= 1:
+            raise ValueError('Invalid host filter thresholds')
+
+        if not hasattr(self, 'Cell_Anno') or not (hasattr(self, 'Cell_Other_Count')
+                                                 or hasattr(self, 'Cell_MGroup_Count')):
+            raise RuntimeError('Provide Cell_Anno and Cell_Other_Count or Cell_MGroup_Count.')
+        anno = self.Cell_Anno.copy()
+        if not {'Cell', 'Type', 'SGB'}.issubset(anno.columns):
+            raise ValueError('Cell_Anno must contain Cell, Type, and SGB columns')
+        known = anno.loc[(anno['Type'] == 'KnownCell') & anno['SGB'].notna()
+                         & (anno['SGB'] != 'NoSGB'), ['Cell', 'SGB']].drop_duplicates('Cell')
+        if known.empty:
+            raise ValueError('Cell_Anno contains no known-species cells')
+
+        selected_sgbs = None
+        if sgb_list is not None:
+            if isinstance(sgb_list, (str, os.PathLike)):
+                source = os.fspath(sgb_list)
+                if os.path.isdir(source):
+                    selected_sgbs = {
+                        os.path.splitext(name)[0] for name in os.listdir(source)
+                        if name.lower().endswith(('.fasta', '.fa', '.fna'))
+                        and os.path.isfile(os.path.join(source, name))
+                    }
+                elif os.path.isfile(source) and source.lower().endswith('.txt'):
+                    with open(source, encoding='utf-8-sig') as handle:
+                        selected_sgbs = {
+                            line.strip() for line in handle
+                            if line.strip() and not line.lstrip().startswith('#')
+                        }
+                else:
+                    raise ValueError('sgb_list must be a .txt file or a FASTA directory')
+            else:
+                selected_sgbs = set(sgb_list)
+            if not selected_sgbs:
+                raise ValueError('sgb_list contains no SGB IDs')
+            invalid = [sgb for sgb in selected_sgbs
+                       if not isinstance(sgb, str) or re.fullmatch(r'SGB\d+', sgb) is None]
+            if invalid:
+                raise ValueError(f'Invalid SGB IDs in sgb_list: {invalid[:5]}')
+            missing = sorted(selected_sgbs - set(known['SGB']))
+            if missing:
+                raise ValueError(f'SGB IDs not found in Cell_Anno: {missing[:5]}')
+            known = known.loc[known['SGB'].isin(selected_sgbs)]
+
+        if hasattr(self, 'Cell_MGroup_Count'):
+            counts = self.Cell_MGroup_Count.copy()
+            if not {'Cell', 'MGroup', 'Count'}.issubset(counts.columns):
+                raise ValueError('Cell_MGroup_Count must contain Cell, MGroup, and Count columns')
+            counts = counts[['Cell', 'MGroup', 'Count']].rename(columns={'Count': 'count'})
+        else:
+            counts = self.Cell_Other_Count.copy()
+            if counts.shape[1] != 3:
+                raise ValueError('Cell_Other_Count must contain Cell, Other, and count columns')
+            counts.columns = ['Cell', 'Other', 'count']
+            counts['MGroup'] = (counts['Other'].str.split('|', regex=False).str[2]
+                                .str.split('-', n=1, regex=False).str[0])
+        counts = counts.loc[counts['Cell'].isin(known['Cell'])]
+        counts['count'] = pd.to_numeric(counts['count'], errors='raise')
+        counts = counts.loc[counts['MGroup'].str.fullmatch(r'M[0-9]+').fillna(False)
+                            & (counts['count'] > 0)].groupby(
+            ['Cell', 'MGroup'], as_index=False)['count'].sum()
+        counts = counts.merge(known, on='Cell', how='inner')
+        if counts.empty:
+            raise ValueError('No MGroups match known-species cells')
+
+        # The R filter discards the lowest cumulative 20% of reads per cell.
+        counts = counts.sort_values(['Cell', 'count', 'MGroup'])
+        cell_total = counts.groupby('Cell')['count'].transform('sum')
+        cumulative = counts.groupby('Cell')['count'].cumsum() / cell_total
+        positive = counts.loc[(counts['count'] >= min_cell_phage)
+                              & (cumulative >= low_read_fraction)].copy()
+        if positive.empty:
+            raise ValueError('No cell-MGroup pairs pass the read filters')
+
+        result_dir = os.path.join(self.outputDir, 'HostPhageResult')
+        if selected_sgbs is not None:
+            from hashlib import sha256
+            fingerprint = sha256('\n'.join(sorted(selected_sgbs)).encode()).hexdigest()[:8]
+            result_dir = os.path.join(result_dir,
+                                      f'SGB_subset_{len(selected_sgbs)}_{fingerprint}')
+        os.makedirs(result_dir, exist_ok=True)
+        if selected_sgbs is not None:
+            with open(os.path.join(result_dir, 'SGB_list.txt'), 'w') as handle:
+                handle.write('\n'.join(sorted(selected_sgbs)) + '\n')
+        paths = {
+            'species_proportion': os.path.join(result_dir, 'phage_positive_species_proportion.pdf'),
+            'cell_count_correlation': os.path.join(result_dir, 'phage_positive_cell_correlation.pdf'),
+            'host_range': os.path.join(result_dir, 'phage_host_range_summary.pdf'),
+            'phages_per_cell': os.path.join(result_dir, 'phage_types_per_cell.pdf'),
+        }
+
+        from tempfile import TemporaryDirectory
+
+        r_script = os.path.join(self.PYTHONDIR, 'PlotHostPhageSummary.R')
+        rscript = os.environ.get('METASAG_RSCRIPT', 'Rscript')
+        with TemporaryDirectory(prefix='metasag_host_phage_') as temp_dir:
+            known_file = os.path.join(temp_dir, 'known.tsv')
+            positive_file = os.path.join(temp_dir, 'positive.tsv')
+            known.to_csv(known_file, sep='\t', index=False)
+            positive[['Cell', 'SGB', 'MGroup']].to_csv(positive_file, sep='\t', index=False)
+            command = [rscript, r_script, known_file, positive_file, result_dir,
+                       str(min_species_cells), str(min_host_cells),
+                       str(main_host_contribution)]
+            process = subprocess.run(command, stdout=subprocess.PIPE,
+                                     stderr=subprocess.STDOUT, text=True)
+            if process.returncode:
+                raise RuntimeError(f'R summary plotting failed:\n{process.stdout}')
+        missing = [path for path in paths.values() if not os.path.isfile(path)]
+        if missing:
+            raise RuntimeError(f'R summary plotting did not create: {missing}')
+        return paths
+
+    @timeit
     def DoubleCellKraken(self, CellBarn, env=None, KrakenDB=None, ReadsEnd='Single'):
 
 

@@ -681,8 +681,8 @@ class SingleBin():
             plt.text(x_center,y_center,str(j),fontsize=12,fontweight='bold',color='black',bbox=dict(facecolor='white',alpha=0.8,edgecolor='none'))
         plt.xticks([])
         plt.yticks([])
-        plt.ylabel('UMAP dimention 2')
-        plt.xlabel('UMAP dimention 1')
+        plt.ylabel('UMAP dimension 2')
+        plt.xlabel('UMAP dimension 1')
         plt.savefig(os.path.join(PreparePic, Species) + '_sp_call_SNP_umap_final.svg', format='svg',bbox_inches='tight')
         plt.clf()
 
@@ -1149,8 +1149,8 @@ class AllBin():
 
         plt.xticks([])
         plt.yticks([])
-        plt.ylabel('UMAP dimention 2')
-        plt.xlabel('UMAP dimention 1')
+        plt.ylabel('UMAP dimension 2')
+        plt.xlabel('UMAP dimension 1')
         plt.savefig(os.path.join(PreparePic, Species) + '_sp_call_SNP_umap_final.svg', format='svg',
                     bbox_inches='tight')
         plt.clf()
