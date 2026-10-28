@@ -247,7 +247,66 @@ Eg. MainPhage_Cluster_Count.txt
 
 
 
-## Func 5：DoubleCellKraken(CellBarn)
+## Func 5：PlotHostPhageSummary(min_cell_phage=80, low_read_fraction=0.2, min_species_cells=10, min_host_cells=10, main_host_contribution=0.9, sgb_list=None)
+
+- **Function Description:**
+
+Summarizes phage MGroups in known-species cells and generates four plots. Run `CellSGBStatistic()` and `CellAsign()` first to populate `Cell_Other_Count` and `Cell_Anno`. The function extracts MGroup IDs from VDB annotations, sums reads for each cell and MGroup, applies the per-cell read filters, and calls `PlotHostPhageSummary.R` to draw the figures. If `Cell_MGroup_Count` is present on the MPBowtie object, that table is used instead of `Cell_Other_Count`.
+
+- **Optional Parameters:**
+```
+min_cell_phage         --      Minimum read count for a cell-MGroup pair. Default Value:80.
+
+low_read_fraction      --      Fraction of the lowest-count MGroup reads excluded within each cell.
+                               Default Value:0.2.
+
+min_species_cells      --      Minimum number of cells for a host SGB to appear in the plots.
+                               The SGB must have more than this number of cells. Default Value:10.
+
+min_host_cells         --      Minimum number of positive cells for a major phage-host pair.
+                               Default Value:10.
+
+main_host_contribution --      Cumulative squared-count contribution used to select the main hosts
+                               of each MGroup. Default Value:0.9.
+
+sgb_list               --      Optional SGB IDs to analyze: a list of IDs, a text file with one ID
+                               per line, or a directory of SGB-named .fasta/.fa/.fna files.
+                               Default Value:None (all known SGBs).
+```
+
+- **Example:**
+
+```python
+# Run after obj.CellSGBStatistic() and obj.CellAsign(BC_Count).
+plots = obj.PlotHostPhageSummary()
+
+# To restrict the analysis to selected SGBs:
+# plots = obj.PlotHostPhageSummary(sgb_list=["SGB64109", "SGB48813"])
+```
+
+The function requires R and the packages `ggplot2`, `ggbeeswarm`, `ggpubr`, `ComplexHeatmap`, `circlize`, `dplyr`, `tidyr`, and `pheatmap`. It uses `Rscript` from `PATH` by default; set `METASAG_RSCRIPT` to the executable path if needed. The R script must be available alongside `MetaPhlAnAsign.py`.
+
+- **Result:**
+
+The function returns the paths of four PDF files in `HostPhageResult/`. When `sgb_list` is provided, it writes the plots and `SGB_list.txt` in a separate `SGB_subset_*` subdirectory.
+
+Number of phage types per positive cell (`phage_types_per_cell.pdf`):
+
+![Phage types per cell](PhagesTypes_Num.png)
+
+Phage-positive cell proportion across host SGBs (`phage_positive_species_proportion.pdf`):
+
+![Phage-positive cell proportion by SGB](Violin.png)
+
+Relationship between total and phage-positive cell counts per SGB (`phage_positive_cell_correlation.pdf`):
+
+![Total and phage-positive cell counts by SGB](Cell_Phage_Num.png)
+
+Phage-host cell fraction heatmap with aligned positive-cell and main-host counts (`phage_host_range_summary.pdf`):
+
+![Phage-host heatmap and counts](Phages_Heatmap.png)
+
+## Func 6：DoubleCellKraken(CellBarn)
 
 - **Function Description:**
 According to the DoubleCell information obtained from the CellAsign () function, perform Kraken2 re-annotation on each multi-cell droplet and plot a Sankey diagram of species classification for individual droplets for visualization.
@@ -322,6 +381,9 @@ obj.CellAsign(BC_Count)
 
 obj.HostPhage()
 
+# Plot the phage summary figures using the cell annotations and MGroup reads.
+obj.PlotHostPhageSummary()
+
 
 
 # View the species distribution of multi-cell droplets.
@@ -391,6 +453,8 @@ BC_Count = pd.read_csv(Target_Path + "Cell_Filter/bcread.txt", sep="\t", header=
 obj.CellAsign(BC_Count)
 
 obj.HostPhage()
+# Plot the phage summary figures for the test sample.
+obj.PlotHostPhageSummary()
 
 CellBarn = Target_Path + "Barn/Cell/"
 obj.DoubleCellKraken(CellBarn, env="kraken", KrakenDB="/Database/k2_standard_20230605/", ReadsEnd="Pair")
