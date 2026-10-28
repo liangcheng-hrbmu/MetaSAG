@@ -6,7 +6,7 @@ def readme_file():
 
 setup(
     name='MetaSAG',
-    version='1.3.10',
+    version='1.3.11',
     description='A microbial single-amplified genome droplet sequencing analysis toolkit',
     long_description=readme_file(),
     long_description_content_type="text/markdown",

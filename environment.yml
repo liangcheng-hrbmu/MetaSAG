@@ -35,6 +35,9 @@ dependencies:
   - r-optparse
   - r-ape
   - r-ggplot2
+  - r-ggbeeswarm
+  - r-ggpubr
+  - r-tidyr
   - r-remotes
 
   # Install MetaSAG itself from the local source tree. This triggers setup.py
